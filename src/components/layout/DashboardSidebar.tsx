@@ -33,15 +33,15 @@ const DashboardSidebar = () => {
             Dashboard
           </NavLink>
 
-          {/* <NavLink
-            to="/properties"
+          <NavLink
+            to="/all-properties"
             className={({ isActive }) =>
               `dashboard-nav-item ${isActive ? "active" : ""}`
             }
           >
             <span>▣</span>
             All Properties
-          </NavLink> */}
+          </NavLink>
 
           <NavLink
             to="/my-properties"
@@ -72,7 +72,7 @@ const DashboardSidebar = () => {
             <span>▱</span>
             Messages
           </NavLink> */}
-{/* 
+          {/* 
           <NavLink
             to="/profile"
             className={({ isActive }) =>
@@ -82,7 +82,15 @@ const DashboardSidebar = () => {
             <span>♙</span>
             Profile
           </NavLink> */}
-
+          <NavLink
+            to="/favorites"
+            className={({ isActive }) =>
+              `dashboard-nav-item ${isActive ? "active" : ""}`
+            }
+          >
+            <span>♡</span>
+            Favorites
+          </NavLink>
           <button
             type="button"
             className="dashboard-nav-item logout"

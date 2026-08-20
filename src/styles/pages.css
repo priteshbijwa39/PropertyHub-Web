@@ -183,8 +183,9 @@
 
   background: linear-gradient(
     to top,
-    rgba(15, 23, 42, 0.9) 0%,
-    rgba(15, 23, 42, 0.55) 45%,
+    rgba(15, 23, 42, 0.95) 0%,
+    rgba(15, 23, 42, 0.8) 25%,
+    rgba(15, 23, 42, 0.45) 55%,
     rgba(15, 23, 42, 0) 100%
   );
 }
@@ -1254,8 +1255,6 @@
   }
 }
 
-
-
 /* ========================================
 MY Property
 ======================================== */
@@ -1553,7 +1552,6 @@ MY Property
   border-radius: var(--radius-sm);
 }
 
-
 /* loading property */
 .properties-loading,
 .properties-empty {
@@ -1579,4 +1577,203 @@ MY Property
   margin-bottom: var(--spacing-lg);
   color: var(--color-gray-500);
   font-size: var(--font-size-sm);
+}
+
+/* ========================================
+dashboard Recent Properties section styles
+======================================== */
+.recent-properties {
+  width: 100%;
+  margin-top: 32px;
+}
+
+.recent-properties .section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.recent-properties .section-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-gray-900);
+}
+
+.recent-properties .section-header p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--color-gray-500);
+}
+
+.recent-properties .section-header a {
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.recent-properties .section-header a:hover {
+  text-decoration: underline;
+}
+
+/* Property cards */
+.recent-properties .property-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+/* Empty state */
+.recent-properties-empty {
+  min-height: 220px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  border: 1px dashed var(--color-gray-300);
+  border-radius: 16px;
+
+  background: var(--color-white);
+
+  color: var(--color-gray-500);
+  text-align: center;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .recent-properties .property-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .recent-properties {
+    margin-top: 24px;
+  }
+
+  .recent-properties .section-header {
+    align-items: flex-start;
+  }
+
+  .recent-properties .section-header h2 {
+    font-size: 18px;
+  }
+
+  .recent-properties .property-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* ========================================
+dashboard Properties price range styles
+======================================== */
+
+.property-price-range {
+  margin-top: 24px;
+  padding: 24px;
+
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: 16px;
+}
+
+.property-price-range-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.property-price-range-header div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.property-price-range-header span:first-child {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-gray-900);
+}
+
+.property-price-range-header strong {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-gray-500);
+}
+
+.property-price-range-header > span {
+  padding: 6px 12px;
+  border-radius: 999px;
+
+  background: var(--color-gray-100);
+  color: var(--color-gray-600);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.property-price-range-values {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 20px;
+
+  margin-top: 28px;
+}
+
+.property-price-range-values div:not(.price-range-line) {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.property-price-range-values small {
+  color: var(--color-gray-500);
+  font-size: 12px;
+}
+
+.property-price-range-values strong {
+  color: var(--color-gray-900);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.price-range-line {
+  position: relative;
+  height: 6px;
+  margin-bottom: 8px;
+
+  border-radius: 999px;
+  background: var(--color-gray-200);
+}
+
+.price-range-line span {
+  position: absolute;
+  left: 0;
+  right: 0;
+
+  height: 100%;
+
+  border-radius: inherit;
+  background: var(--color-primary);
+}
+
+@media (max-width: 640px) {
+  .property-price-range-values {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .price-range-line {
+    order: 2;
+  }
 }

@@ -67,8 +67,7 @@ const Login = () => {
       setAuth(response.user, response.token);
       navigate("/dashboard");
     } catch (error) {
-      toast.error("Login failed. Please check your credentials.");
-      console.error("Login failed:-->", error);
+      toast.error("Login failed Error: " + (error as Error).message);
     } finally {
       setLoading(false);
     }
@@ -114,7 +113,7 @@ const Login = () => {
                 }
               />
 
-              <div className="login-options">
+              {/* <div className="login-options">
                 <label className="remember-me">
                   <input type="checkbox" />
                   <span>Remember me</span>
@@ -123,7 +122,7 @@ const Login = () => {
                 <button type="button" className="forgot-password">
                   Forgot Password?
                 </button>
-              </div>
+              </div> */}
 
               <Button
                 type="submit"

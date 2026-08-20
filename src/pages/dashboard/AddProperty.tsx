@@ -80,7 +80,7 @@ const AddProperty = () => {
       toast.success("Property added successfully!");
       setTimeout(() => {
         navigate("/my-properties");
-      }, 2000);
+      }, 1000);
     } catch (error) {
       console.error("Add Property Error:", error);
 
@@ -106,7 +106,7 @@ const AddProperty = () => {
             type="text"
             name="title"
             value={formData.title}
-            placeholder="Enter property title"
+            placeholder="e.g. Luxury 3 BHK Apartment in Indore"
             required
             onChange={(event) => handleChange("title", event.target.value)}
           />
@@ -126,7 +126,7 @@ const AddProperty = () => {
               <option value="Villa">Villa</option>
               <option value="House">House</option>
               <option value="Apartment">Apartment</option>
-               <option value="Land">Land</option>
+               {/* <option value="Land">Land</option> */}
             </select>
           </div>
 
@@ -135,7 +135,7 @@ const AddProperty = () => {
             type="number"
             name="price"
             value={formData.price}
-            placeholder="Enter price"
+            placeholder="e.g. 5000000"
             required
             onChange={(event) => handleChange("price", event.target.value)}
           />
@@ -145,7 +145,7 @@ const AddProperty = () => {
             type="text"
             name="location"
             value={formData.location}
-            placeholder="Enter location"
+            placeholder="e.g. Vijay Nagar"
             required
             onChange={(event) => handleChange("location", event.target.value)}
           />
@@ -155,7 +155,7 @@ const AddProperty = () => {
             type="text"
             name="city"
             value={formData.city}
-            placeholder="Enter city"
+            placeholder="e.g. Indore"
             required
             onChange={(event) => handleChange("city", event.target.value)}
           />
@@ -173,8 +173,8 @@ const AddProperty = () => {
             >
               <option value="">Select state</option>
               <option value="Madhya Pradesh">Madhya Pradesh</option>
-              <option value="Maharashtra">Maharashtra</option>
-              <option value="Rajasthan">Rajasthan</option>
+              {/* <option value="Maharashtra">Maharashtra</option>
+              <option value="Rajasthan">Rajasthan</option> */}
             </select>
           </div>
 
@@ -183,7 +183,7 @@ const AddProperty = () => {
             type="number"
             name="area"
             value={formData.area}
-            placeholder="Enter area"
+            placeholder="e.g. 1500"
             required
             onChange={(event) => handleChange("area", event.target.value)}
           />
@@ -201,6 +201,9 @@ const AddProperty = () => {
               <option value="2">2 Bedrooms</option>
               <option value="3">3 Bedrooms</option>
               <option value="4">4 Bedrooms</option>
+                <option value="4">5 Bedrooms</option>
+                  <option value="4">6 Bedrooms</option>
+                 
             </select>
           </div>
 
@@ -219,6 +222,7 @@ const AddProperty = () => {
               <option value="2">2 Bathrooms</option>
               <option value="3">3 Bathrooms</option>
               <option value="4">4 Bathrooms</option>
+             
             </select>
           </div>
         </div>
@@ -230,7 +234,7 @@ const AddProperty = () => {
             id="description"
             name="description"
             value={formData.description}
-            placeholder="Describe your property..."
+            placeholder="Describe the property, amenities, nearby facilities, and other important details..."
             rows={4}
             onChange={(event) =>
               handleChange("description", event.target.value)
@@ -238,7 +242,7 @@ const AddProperty = () => {
           />
         </div>
 
-        <div className="image-upload-field">
+        {/* <div className="image-upload-field">
           <label>
             Property Images <span>*</span>
           </label>
@@ -260,7 +264,7 @@ const AddProperty = () => {
           {images.length > 0 && (
             <p className="selected-images">{images.length} image(s) selected</p>
           )}
-        </div>
+        </div> */}
 
         <div className="add-property-actions">
           <Link to="/dashboard" className="cancel-button">

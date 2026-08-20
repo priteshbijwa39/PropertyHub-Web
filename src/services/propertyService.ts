@@ -47,7 +47,10 @@ export interface Property {
   bathrooms?: number;
   // images: string[];
 }
-
+export interface UpdatePropertyResponse {
+  message: string;
+  property: Property;
+}
 
 export const addProperty = async (propertyData: AddPropertyRequest) => {
   const formData = new FormData();
@@ -116,5 +119,28 @@ export const deletePropertyApi = (
     {
       method: "DELETE",
     },
+  );
+};
+
+
+export const updateProperty = async (
+  propertyId: string,
+  propertyData: {
+    title: string;
+    description: string;
+    price: number;
+    propertyType: string;
+    location: string;
+    area: number;
+    bedrooms?: number;
+    bathrooms?: number;
+  }
+) => {
+  return await apiClient<UpdatePropertyResponse>(
+    `${API_ENDPOINTS.PROPERTIES.UPDATE}/${propertyId}`,
+    {
+      method: "PUT",
+      data: propertyData,
+    }
   );
 };

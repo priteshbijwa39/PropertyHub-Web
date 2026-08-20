@@ -137,7 +137,7 @@ const PropertyDetails = () => {
           <p>Contact the owner for more information.</p>
         </div>
 
-        <Button type="button" variant="primary">
+        <Button type="button" variant="primary" disabled={true}>
           Contact Owner
         </Button>
       </div>
