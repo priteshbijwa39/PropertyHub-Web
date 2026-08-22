@@ -88,7 +88,7 @@ const Signup = () => {
         password: formData.password,
       };
 
-      const response = await signupApi(payload);
+      await signupApi(payload);
 
       navigate("/login");
     } catch (error) {

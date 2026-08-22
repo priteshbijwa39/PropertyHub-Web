@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
@@ -17,16 +17,35 @@ interface LoginErrors {
   password?: string;
 }
 
+const REMEMBERED_EMAIL_KEY = "propertyhub_remembered_email";
+
 const Login = () => {
   const navigate = useNavigate();
+
   const setAuth = useAuthStore((state) => state.setAuth);
+
   const [formData, setFormData] = useState<LoginForm>({
     email: "",
     password: "",
   });
 
+  const [rememberMe, setRememberMe] = useState(false);
+
   const [errors, setErrors] = useState<LoginErrors>({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem(REMEMBERED_EMAIL_KEY);
+
+    if (rememberedEmail) {
+      setFormData((previous) => ({
+        ...previous,
+        email: rememberedEmail,
+      }));
+
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleChange = (field: keyof LoginForm, value: string) => {
     setFormData((previous) => ({
@@ -38,6 +57,14 @@ const Login = () => {
       ...previous,
       [field]: "",
     }));
+  };
+
+  const handleRememberMeChange = (checked: boolean) => {
+    setRememberMe(checked);
+
+    if (!checked) {
+      localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+    }
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -57,14 +84,22 @@ const Login = () => {
 
     try {
       setLoading(true);
-      // Temporary navigation for UI testing.
-      // localStorage.setItem("propertyhub_token", "demo-token");
+
       const response = await loginApi({
         email: formData.email,
         password: formData.password,
       });
-      toast.success("Login successful!");
+
+      if (rememberMe) {
+        localStorage.setItem(REMEMBERED_EMAIL_KEY, formData.email);
+      } else {
+        localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+      }
+
       setAuth(response.user, response.token);
+
+      toast.success("Login successful!");
+
       navigate("/dashboard");
     } catch (error) {
       toast.error("Login failed Error: " + (error as Error).message);
@@ -80,11 +115,13 @@ const Login = () => {
           <div className="login-form-wrapper">
             <div className="login-brand">
               <span className="brand-property">Property</span>
+
               <span className="brand-hub">Hub</span>
             </div>
 
             <div className="login-heading">
               <h1>Welcome Back! 👋</h1>
+
               <p>Login to manage your properties</p>
             </div>
 
@@ -113,16 +150,23 @@ const Login = () => {
                 }
               />
 
-              {/* <div className="login-options">
+              <div className="login-options">
                 <label className="remember-me">
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(event) =>
+                      handleRememberMeChange(event.target.checked)
+                    }
+                  />
+
                   <span>Remember me</span>
                 </label>
 
-                <button type="button" className="forgot-password">
+                {/* <Link to="/forgot-password" className="forgot-password" >
                   Forgot Password?
-                </button>
-              </div> */}
+                </Link> */}
+              </div>
 
               <Button
                 type="submit"
@@ -143,6 +187,7 @@ const Login = () => {
         <div className="login-image-section">
           <div className="login-overlay">
             <h2>Find Your Dream Property</h2>
+
             <p>
               Discover properties that match your lifestyle and make your next
               move with PropertyHub.

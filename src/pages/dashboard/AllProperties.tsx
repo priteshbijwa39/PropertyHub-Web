@@ -152,11 +152,8 @@ const AllProperties = () => {
       </header>
 
       <section className="properties-section">
-        {/* Heading */}
         <div className="properties-heading">
           <div>
-            <h2>Properties</h2>
-
             <p>
               {loading
                 ? "Loading properties..."

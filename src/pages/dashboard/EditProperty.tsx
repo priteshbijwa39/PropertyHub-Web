@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
 import DashboardLayout from "../../components/layout/DashboardLayout";
@@ -22,8 +22,7 @@ interface PropertyForm {
 }
 
 const EditProperty = () => {
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
 
   const [formData, setFormData] = useState<PropertyForm>({
     title: "",
@@ -36,17 +35,21 @@ const EditProperty = () => {
     description: "",
   });
 
-  const [images, setImages] = useState<File[]>([]);
+  // const [images, setImages] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(true);
+  const [, setFetching] = useState(true);
 
   useEffect(() => {
     const fetchProperty = async () => {
+      if (!id) {
+        toast.error("Property ID is missing");
+        return;
+      }
       try {
         setFetching(true);
 
         const response = await getPropertyByIdApi(id);
-        const property: Property = response.property ?? response;
+        const property: Property = response?.property ?? response;
 
         setFormData({
           title: property.title ?? "",
@@ -77,14 +80,18 @@ const EditProperty = () => {
     }));
   };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setImages(Array.from(event.target.files));
-    }
-  };
+  // const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files) {
+  //     setImages(Array.from(event.target.files));
+  //   }
+  // };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!id) {
+      toast.error("Property ID is missing");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -104,7 +111,7 @@ const EditProperty = () => {
 
       console.log("Update Property Response:", response);
       toast.success("Property updated successfully!");
-        // navigate("/my-properties");
+      // navigate("/my-properties");
     } catch (error) {
       console.error("Update Property Error:", error);
       toast.error("Failed to update property. Please try again.");
@@ -135,7 +142,7 @@ const EditProperty = () => {
         </div>
       </div>
 
-      <form className="add-property-form" onSubmit={handleSubmit} >
+      <form className="add-property-form" onSubmit={handleSubmit}>
         <div className="property-form-grid">
           <Input
             label="Property Title"
@@ -171,7 +178,7 @@ const EditProperty = () => {
             type="number"
             name="price"
             value={formData.price}
-              placeholder="e.g. 5000000"
+            placeholder="e.g. 5000000"
             required
             onChange={(event) => handleChange("price", event.target.value)}
           />
@@ -219,7 +226,7 @@ const EditProperty = () => {
             type="number"
             name="area"
             value={formData.area}
-             placeholder="e.g. 1500"
+            placeholder="e.g. 1500"
             required
             onChange={(event) => handleChange("area", event.target.value)}
           />
@@ -237,8 +244,8 @@ const EditProperty = () => {
               <option value="2">2 Bedrooms</option>
               <option value="3">3 Bedrooms</option>
               <option value="4">4 Bedrooms</option>
-                 <option value="4">5 Bedrooms</option>
-                  <option value="4">6 Bedrooms</option>
+              <option value="4">5 Bedrooms</option>
+              <option value="4">6 Bedrooms</option>
             </select>
           </div>
 
@@ -268,7 +275,7 @@ const EditProperty = () => {
             id="description"
             name="description"
             value={formData.description}
-             placeholder="Describe the property, amenities, nearby facilities, and other important details..."
+            placeholder="Describe the property, amenities, nearby facilities, and other important details..."
             rows={4}
             onChange={(event) =>
               handleChange("description", event.target.value)
@@ -305,7 +312,7 @@ const EditProperty = () => {
             Cancel
           </Link>
 
-          <Button type="submit" variant="primary" loading={loading} >
+          <Button type="submit" variant="primary" loading={loading}>
             Update Property
           </Button>
         </div>

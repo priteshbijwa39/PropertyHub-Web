@@ -1,6 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import ProtectedRoute from "./ProtectedRoute";
-
 import Login from "../pages/auth/Login";
 import Signup from "../pages/auth/Signup";
 import Dashboard from "../pages/dashboard/Dashboard";
@@ -10,21 +9,22 @@ import PropertyDetails from "../pages/dashboard/PropertyDetails";
 import EditProperty from "../pages/dashboard/EditProperty";
 import FavoriteProperties from "../pages/dashboard/FavoriteProperties";
 import AllProperties from "../pages/dashboard/AllProperties";
+import ForgotPassword from "../pages/auth/ForgotPassword";
+import ResetPassword from "../pages/auth/ResetPassword";
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
         {/* Initial Route */}
-        <Route
-          path="/"
-          element={<Navigate to="/login" replace />}
-        />
+        <Route path="/" element={<Navigate to="/login" replace />} />
 
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
+        <Route path="/reset-password" element={<ResetPassword />} />
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -37,10 +37,7 @@ const AppRoutes = () => {
         </Route>
 
         {/* Unknown route */}
-        <Route
-          path="*"
-          element={<Navigate to="/" replace />}
-        />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

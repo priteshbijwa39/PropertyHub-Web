@@ -353,32 +353,21 @@ Logout Modal
   border-radius: 999px;
 }
 
-/* Success */
-
 .toast-success .toast-line {
   background-color: #16a34a;
 }
-
-/* Error */
 
 .toast-error .toast-line {
   background-color: var(--color-danger);
 }
 
-/* Warning */
-
 .toast-warning .toast-line {
   background-color: var(--color-secondary-dark);
 }
 
-/* Info */
-
 .toast-info .toast-line {
   background-color: var(--color-primary);
 }
-
-/* Animation */
-
 @keyframes toast-slide-in {
   from {
     opacity: 0;
@@ -544,8 +533,6 @@ Logout Modal
 .favorite-browse-button:hover {
   opacity: 0.9;
 }
-
-
 
 /* ========================================
 Property card component

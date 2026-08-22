@@ -40,12 +40,14 @@ export interface Property {
   price: number;
   propertyType: string;
   location: string;
-  // city: string;
-  // state: string;
+  city: string;
   area: number;
   bedrooms?: number;
   bathrooms?: number;
-  // images: string[];
+  images?: string[];
+  owner: string;
+  createdAt: string;
+  updatedAt?: string;
 }
 export interface UpdatePropertyResponse {
   message: string;
@@ -85,10 +87,11 @@ export const addProperty = async (propertyData: AddPropertyRequest) => {
 
 
 export interface GetPropertiesResponse {
-  message: string;
   properties: Property[];
 }
-
+export interface GetPropertyResponse {
+  property: Property;
+}
 export const getAllPropertiesApi = (): Promise<GetPropertiesResponse> => {
   return apiClient<GetPropertiesResponse>(
     API_ENDPOINTS.PROPERTIES.GET_ALL,
@@ -101,8 +104,8 @@ export const getAllPropertiesApi = (): Promise<GetPropertiesResponse> => {
 
 export const getPropertyByIdApi = (
   propertyId: string,
-): Promise<GetPropertiesResponse> => {
-  return apiClient<GetPropertiesResponse>(
+): Promise<GetPropertyResponse> => {
+  return apiClient<GetPropertyResponse>(
     `${API_ENDPOINTS.PROPERTIES.MY_PROPERTIES}/${propertyId}`,
     {
       method: "GET",

@@ -1,4 +1,3 @@
-import Button from "../../components/common/Button";
 import { useAuthStore } from "../../store/authStore";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import PropertyCard from "../../components/property/PropertyCard";
@@ -10,8 +9,6 @@ import {
 import { toast } from "../../components/common/Toast";
 import { useFavoriteStore } from "../../store/favoriteStore";
 import PropertyTypeChart from "../../components/property/PropertyTypeChart";
-import { Link } from "react-router";
-
 const Dashboard = () => {
   const user = useAuthStore((state) => state?.user);
   const [properties, setProperties] = useState<Property[]>([]);

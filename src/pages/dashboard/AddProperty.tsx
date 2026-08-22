@@ -34,7 +34,7 @@ const AddProperty = () => {
     description: "",
   });
 
-  const [images, setImages] = useState<File[]>([]);
+  // const [images, setImages] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (field: keyof PropertyForm, value: string) => {
@@ -44,11 +44,11 @@ const AddProperty = () => {
     }));
   };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setImages(Array.from(event.target.files));
-    }
-  };
+  // const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files) {
+  //     setImages(Array.from(event.target.files));
+  //   }
+  // };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

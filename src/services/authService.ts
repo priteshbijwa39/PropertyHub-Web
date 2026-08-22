@@ -8,16 +8,19 @@ export interface LoginRequest {
 }
 
 export interface SignupRequest {
-  username: string;
+   name?: string;
   email: string;
   password: string;
 }
 
+
 export interface User {
-  _id: string;
-  username: string;
+  id: string;
+  name: string;
   email: string;
+  username?: string;
 }
+
 
 export interface LoginResponse {
   message: string;
@@ -46,4 +49,34 @@ export const signupApi = (
     method: "POST",
     data,
   });
+};
+
+
+export const forgotPasswordApi = async (
+  payload: {
+    email: string;
+  },
+) => {
+  console.log("Forgot Password API called with payload:", payload);
+  // const response = await apiClient.post(
+  //   "/auth/forgot-password",
+  //   payload,
+  // );
+
+  // return response.data;
+};
+
+export const resetPasswordApi = async (
+  payload: {
+    token: string;
+    password: string;
+  },
+) => {
+  console.log("Reset Password API called with payload:", payload);
+  // const response = await apiClient.post(
+  //   "/auth/reset-password",
+  //   payload,
+  // );
+
+  // return response.data;
 };
