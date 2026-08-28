@@ -78,23 +78,41 @@ const ResetPassword = () => {
   };
 
   return (
-    <main className="login-page">
-      <section className="login-container">
-        <div className="login-form-section">
-          <div className="login-form-wrapper">
-            <div className="login-brand">
-              <span className="brand-property">Property</span>
+    <main className="min-h-screen bg-gray-50">
+      <section className="mx-auto flex min-h-screen max-w-7xl">
+        {/* Left - Form Section */}
+        <div className="flex w-full items-center justify-center px-6 py-10 lg:w-1/2 lg:px-12">
+          <div className="w-full max-w-md">
+            {/* Brand */}
+            <div className="mb-10 text-center lg:text-left">
+              <Link
+                to="/"
+                className="inline-flex items-center text-3xl font-extrabold tracking-tight no-underline"
+              >
+                <span className="text-gray-900">Property</span>
 
-              <span className="brand-hub">Hub</span>
+                <span className="text-blue-600">Hub</span>
+              </Link>
             </div>
 
-            <div className="login-heading">
-              <h1>Reset Password 🔐</h1>
+            {/* Heading */}
+            <div className="mb-8">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl">
+                🔐
+              </div>
 
-              <p>Create a new password for your PropertyHub account.</p>
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+                Reset Password
+              </h1>
+
+              <p className="mt-3 max-w-md text-sm leading-6 text-gray-500">
+                Create a new password for your PropertyHub account. Make sure
+                it's strong and secure.
+              </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="login-form">
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-5">
               <Input
                 label="New Password"
                 type="password"
@@ -137,30 +155,99 @@ const ResetPassword = () => {
                 }}
               />
 
+              {/* Password Security Info */}
+              <div className="flex items-start gap-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3">
+                <span className="mt-0.5 text-sm">🛡️</span>
+
+                <div>
+                  <p className="text-xs font-semibold text-blue-800">
+                    Keep your password secure
+                  </p>
+
+                  <p className="mt-1 text-xs leading-5 text-blue-700">
+                    Use a strong password that you don't use anywhere else.
+                  </p>
+                </div>
+              </div>
+
               <Button
                 type="submit"
                 variant="primary"
                 loading={loading}
-                className="login-button"
+                className="w-full"
               >
                 Reset Password
               </Button>
             </form>
 
-            <p className="signup-link">
-              Remember your password? <Link to="/login">Back to Login</Link>
+            {/* Back to Login */}
+            <p className="mt-8 text-center text-sm text-gray-500 lg:text-left">
+              Remember your password?{" "}
+              <Link
+                to="/login"
+                className="font-semibold text-blue-600 transition-colors hover:text-blue-700"
+              >
+                Back to Login
+              </Link>
             </p>
           </div>
         </div>
 
-        <div className="login-image-section">
-          <div className="login-overlay">
-            <h2>Welcome Back to PropertyHub</h2>
+        {/* Right - Image Section */}
+        <div className="relative hidden overflow-hidden lg:block lg:w-1/2">
+          <img
+            src="/assets/images/login-property.jpg"
+            alt="Modern property"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
 
-            <p>
-              Create a secure new password and continue managing your
-              properties.
-            </p>
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-950/90 via-blue-900/70 to-blue-700/40" />
+
+          {/* Content */}
+          <div className="relative flex h-full items-end p-12 xl:p-16">
+            <div className="max-w-lg text-white">
+              {/* Badge */}
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+                <span>🔒</span>
+                <span>Secure Account</span>
+              </div>
+
+              <h2 className="text-4xl font-bold leading-tight xl:text-5xl">
+                Protect Your
+                <br />
+                PropertyHub Account
+              </h2>
+
+              <p className="mt-5 max-w-md text-base leading-7 text-blue-100">
+                Create a strong new password and keep your property information
+                safe and secure.
+              </p>
+
+              {/* Security Points */}
+              <div className="mt-8 space-y-3 text-sm text-blue-100">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
+                    ✓
+                  </span>
+                  Secure password reset
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
+                    ✓
+                  </span>
+                  Protect your property data
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
+                    ✓
+                  </span>
+                  Get back to your account securely
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

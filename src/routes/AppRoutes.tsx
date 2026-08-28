@@ -6,11 +6,12 @@ import Dashboard from "../pages/dashboard/Dashboard";
 import AddProperty from "../pages/dashboard/AddProperty";
 import MyProperties from "../pages/dashboard/MyProperties";
 import PropertyDetails from "../pages/dashboard/PropertyDetails";
-import EditProperty from "../pages/dashboard/EditProperty";
 import FavoriteProperties from "../pages/dashboard/FavoriteProperties";
 import AllProperties from "../pages/dashboard/AllProperties";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
+import EditProperties from "../pages/dashboard/EditProperties";
+import Profile from "../pages/dashboard/Profile";
 
 const AppRoutes = () => {
   return (
@@ -31,9 +32,10 @@ const AppRoutes = () => {
           <Route path="/add-property" element={<AddProperty />} />
           <Route path="/my-properties" element={<MyProperties />} />
           <Route path="/properties/:id" element={<PropertyDetails />} />
-          <Route path="/edit-property/:id" element={<EditProperty />} />
+          <Route path="/edit-property/:id" element={<EditProperties />} />
           <Route path="/favorites" element={<FavoriteProperties />} />
           <Route path="/all-properties" element={<AllProperties />} />
+           <Route path="/Profile" element={<Profile />} />
         </Route>
 
         {/* Unknown route */}

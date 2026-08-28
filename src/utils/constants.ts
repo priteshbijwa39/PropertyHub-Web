@@ -1,3 +1,5 @@
+import { Building, Heart, Home, LayoutDashboard, PlusCircle } from "lucide-react";
+
 export const APP_NAME = "PropertyHub";
 
 export const PROPERTY_TYPES = [
@@ -37,3 +39,30 @@ export const API_STATUS = {
 } as const;
 
 
+export const NAV_ITEMS = [
+  {
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "All Properties",
+    href: "/all-properties",
+    icon: Building,
+  },
+  {
+    label: "My Properties",
+    href: "/my-properties",
+    icon: Home,
+  },
+  {
+    label: "Add Property",
+    href: "/add-property",
+    icon: PlusCircle,
+  },
+  {
+    label: "Favorites",
+    href: "/favorites",
+    icon: Heart,
+  },
+];

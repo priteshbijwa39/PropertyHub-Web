@@ -5,10 +5,19 @@ import Input from "../../components/common/Input";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import { toast } from "../../components/common/Toast";
 import { addProperty } from "../../services/propertyService";
+import {
+  BATHROOM_TYPES,
+  BEDROOM_TYPES,
+  PROPERTY_TYPES,
+} from "../../utils/propertyData";
+import type { ListingType, PropertyCategory } from "../../types/property";
 
-interface PropertyForm {
+interface AddPropertyFormData {
   title: string;
-  type: string;
+  description: string;
+  listingType: ListingType;
+  propertyCategory: PropertyCategory;
+  propertyType: string;
   price: string;
   location: string;
   city: string;
@@ -16,14 +25,16 @@ interface PropertyForm {
   area: string;
   bedrooms: string;
   bathrooms: string;
-  description: string;
 }
-
 const AddProperty = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<PropertyForm>({
+
+  const [formData, setFormData] = useState<AddPropertyFormData>({
     title: "",
-    type: "",
+    description: "",
+    listingType: "Sale",
+    propertyCategory: "Residential",
+    propertyType: "",
     price: "",
     location: "",
     city: "",
@@ -31,24 +42,48 @@ const AddProperty = () => {
     area: "",
     bedrooms: "",
     bathrooms: "",
-    description: "",
   });
 
-  // const [images, setImages] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (field: keyof PropertyForm, value: string) => {
+  const handleChange = (field: keyof AddPropertyFormData, value: string) => {
     setFormData((previous) => ({
       ...previous,
       [field]: value,
     }));
   };
 
-  // const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.files) {
-  //     setImages(Array.from(event.target.files));
-  //   }
-  // };
+  const handleCategoryChange = (value: PropertyCategory) => {
+    setFormData((previous) => ({
+      ...previous,
+      propertyCategory: value,
+      propertyType: "",
+      bedrooms: "",
+      bathrooms: "",
+    }));
+  };
+
+  const handlePropertyTypeChange = (value: string) => {
+    setFormData((previous) => ({
+      ...previous,
+      propertyType: value,
+      bedrooms: "",
+      bathrooms: "",
+    }));
+  };
+
+  const showBedrooms = BEDROOM_TYPES.includes(
+    formData.propertyType as (typeof BEDROOM_TYPES)[number],
+  );
+
+  const showBathrooms = BATHROOM_TYPES.includes(
+    formData.propertyType as (typeof BATHROOM_TYPES)[number],
+  );
+
+  const availablePropertyTypes =
+    formData.propertyCategory && formData.propertyCategory in PROPERTY_TYPES
+      ? PROPERTY_TYPES[formData.propertyCategory as keyof typeof PROPERTY_TYPES]
+      : [];
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -56,51 +91,64 @@ const AddProperty = () => {
     try {
       setLoading(true);
 
-      // console.log("Property Data:", formData);
-      // console.log("Property Images:", images);
-
       const payload = {
-        title: formData.title,
-        description: formData.description,
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+
+        listingType: formData.listingType,
+
+        propertyCategory: formData.propertyCategory,
+        propertyType: formData.propertyType,
+
         price: Number(formData.price),
-        propertyType: formData.type,
-        location: formData.location,
-        // city: formData.city,
-        // state: formData.state,
+
+        location: formData.location.trim(),
+        city: formData.city.trim(),
+        state: formData.state,
+
         area: Number(formData.area),
-        bedrooms: formData.bedrooms ? Number(formData.bedrooms) : undefined,
-        bathrooms: formData.bathrooms ? Number(formData.bathrooms) : undefined,
-        // images,
+
+        bedrooms:
+          showBedrooms && formData.bedrooms
+            ? Number(formData.bedrooms)
+            : undefined,
+
+        bathrooms:
+          showBathrooms && formData.bathrooms
+            ? Number(formData.bathrooms)
+            : undefined,
       };
 
-      const response = await addProperty(payload);
-
-      console.log("Add Property Response:", response);
+      await addProperty(payload);
 
       toast.success("Property added successfully!");
+
       setTimeout(() => {
         navigate("/my-properties");
-      }, 1000);
+      }, 500);
     } catch (error) {
       console.error("Add Property Error:", error);
 
-      toast.error("Failed to add property. Please try again.");
+      toast.error(
+        "Failed to add property. Please check the details and try again.",
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <DashboardLayout>
-      <div className="add-property-header">
-        <div>
-          <h1>Add New Property</h1>
-          <p>Add details of your new property</p>
-        </div>
-      </div>
-
-      <form className="add-property-form" onSubmit={handleSubmit}>
-        <div className="property-form-grid">
+    <DashboardLayout
+      title="Add New Property"
+      subtitle="Add details of your new property"
+    >
+      <form
+        onSubmit={handleSubmit}
+        className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm sm:p-6"
+      >
+        {/* Property Fields */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {/* Property Title */}
           <Input
             label="Property Title"
             type="text"
@@ -111,37 +159,109 @@ const AddProperty = () => {
             onChange={(event) => handleChange("title", event.target.value)}
           />
 
-          <div className="form-field">
-            <label htmlFor="type">
-              Property Type <span>*</span>
+          {/* Listing Type */}
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="listingType"
+              className="text-xs font-semibold text-gray-700"
+            >
+              Listing Type <span className="text-red-500">*</span>
             </label>
 
             <select
-              id="type"
-              value={formData.type}
-              onChange={(event) => handleChange("type", event.target.value)}
+              id="listingType"
+              value={formData.listingType}
+              onChange={(event) =>
+                handleChange("listingType", event.target.value)
+              }
               required
+              className="h-11 w-full rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-(--color-primary) focus:ring-2 focus:ring-(--color-primary)/10"
             >
-              <option value="">Select property type</option>
-              <option value="Villa">Villa</option>
-              <option value="House">House</option>
-              <option value="Apartment">Apartment</option>
-               {/* <option value="Land">Land</option> */}
+              <option value="">Select listing type</option>
+              <option value="Sale">Sale</option>
+              <option value="Rent">Rent</option>
+              <option value="Lease">Lease</option>
             </select>
           </div>
 
+          {/* Property Category */}
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="propertyCategory"
+              className="text-xs font-semibold text-gray-700"
+            >
+              Property Category <span className="text-red-500">*</span>
+            </label>
+
+            <select
+              id="propertyCategory"
+              value={formData.propertyCategory}
+              onChange={(event) =>
+                handleCategoryChange(event.target.value as PropertyCategory)
+              }
+              required
+              className="h-11 w-full rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-(--color-primary) focus:ring-2 focus:ring-(--color-primary)/10"
+            >
+              <option value="">Select property category</option>
+              <option value="Residential">Residential</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Land">Land</option>
+              <option value="Hospitality">Hospitality</option>
+            </select>
+          </div>
+
+          {/* Property Type */}
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="propertyType"
+              className="text-xs font-semibold text-gray-700"
+            >
+              Property Type <span className="text-red-500">*</span>
+            </label>
+
+            <select
+              id="propertyType"
+              value={formData.propertyType}
+              onChange={(event) => handlePropertyTypeChange(event.target.value)}
+              disabled={!formData.propertyCategory}
+              required
+              className="h-11 w-full rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 focus:border-(--color-primary) focus:ring-2 focus:ring-(--color-primary)/10"
+            >
+              <option value="">
+                {formData.propertyCategory
+                  ? "Select property type"
+                  : "Select category first"}
+              </option>
+
+              {availablePropertyTypes.map((propertyType) => (
+                <option key={propertyType} value={propertyType}>
+                  {propertyType}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Price */}
           <Input
-            label="Price"
+            label={
+              formData.listingType === "Rent"
+                ? "Rent Amount"
+                : formData.listingType === "Lease"
+                  ? "Lease Amount"
+                  : "Price"
+            }
             type="number"
             name="price"
             value={formData.price}
             placeholder="e.g. 5000000"
             required
+            min="0"
             onChange={(event) => handleChange("price", event.target.value)}
           />
 
+          {/* Location */}
           <Input
-            label="Location"
+            label="Location / Locality"
             type="text"
             name="location"
             value={formData.location}
@@ -150,6 +270,7 @@ const AddProperty = () => {
             onChange={(event) => handleChange("location", event.target.value)}
           />
 
+          {/* City */}
           <Input
             label="City"
             type="text"
@@ -160,9 +281,13 @@ const AddProperty = () => {
             onChange={(event) => handleChange("city", event.target.value)}
           />
 
-          <div className="form-field">
-            <label htmlFor="state">
-              State <span>*</span>
+          {/* State */}
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="state"
+              className="text-xs font-semibold text-gray-700"
+            >
+              State <span className="text-red-500">*</span>
             </label>
 
             <select
@@ -170,104 +295,119 @@ const AddProperty = () => {
               value={formData.state}
               onChange={(event) => handleChange("state", event.target.value)}
               required
+              className="h-11 w-full rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-(--color-primary) focus:ring-2 focus:ring-(--color-primary)/10"
             >
               <option value="">Select state</option>
               <option value="Madhya Pradesh">Madhya Pradesh</option>
-              {/* <option value="Maharashtra">Maharashtra</option>
-              <option value="Rajasthan">Rajasthan</option> */}
             </select>
           </div>
 
+          {/* Area */}
           <Input
-            label="Area (sqft)"
+            label="Area (sq ft)"
             type="number"
             name="area"
             value={formData.area}
             placeholder="e.g. 1500"
             required
+            min="0"
             onChange={(event) => handleChange("area", event.target.value)}
           />
 
-          <div className="form-field">
-            <label htmlFor="bedrooms">Bedrooms</label>
+          {/* Bedrooms */}
+          {showBedrooms && (
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="bedrooms"
+                className="text-xs font-semibold text-gray-700"
+              >
+                Bedrooms <span className="text-red-500">*</span>
+              </label>
 
-            <select
-              id="bedrooms"
-              value={formData.bedrooms}
-              onChange={(event) => handleChange("bedrooms", event.target.value)}
-            >
-              <option value="">Select bedrooms</option>
-              <option value="1">1 Bedroom</option>
-              <option value="2">2 Bedrooms</option>
-              <option value="3">3 Bedrooms</option>
-              <option value="4">4 Bedrooms</option>
-                <option value="4">5 Bedrooms</option>
-                  <option value="4">6 Bedrooms</option>
-                 
-            </select>
-          </div>
+              <select
+                id="bedrooms"
+                value={formData.bedrooms}
+                onChange={(event) =>
+                  handleChange("bedrooms", event.target.value)
+                }
+                required
+                className="h-11 w-full rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-(--color-primary) focus:ring-2 focus:ring-(--color-primary)/10"
+              >
+                <option value="">Select bedrooms</option>
 
-          <div className="form-field">
-            <label htmlFor="bathrooms">Bathrooms</label>
+                {Array.from({ length: 8 }, (_, index) => index + 1).map(
+                  (number) => (
+                    <option key={number} value={number}>
+                      {number} {number === 1 ? "Bedroom" : "Bedrooms"}
+                    </option>
+                  ),
+                )}
+              </select>
+            </div>
+          )}
 
-            <select
-              id="bathrooms"
-              value={formData.bathrooms}
-              onChange={(event) =>
-                handleChange("bathrooms", event.target.value)
-              }
-            >
-              <option value="">Select bathrooms</option>
-              <option value="1">1 Bathroom</option>
-              <option value="2">2 Bathrooms</option>
-              <option value="3">3 Bathrooms</option>
-              <option value="4">4 Bathrooms</option>
-             
-            </select>
-          </div>
+          {/* Bathrooms */}
+          {showBathrooms && (
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="bathrooms"
+                className="text-xs font-semibold text-gray-700"
+              >
+                Bathrooms <span className="text-red-500">*</span>
+              </label>
+
+              <select
+                id="bathrooms"
+                value={formData.bathrooms}
+                onChange={(event) =>
+                  handleChange("bathrooms", event.target.value)
+                }
+                required
+                className="h-11 w-full rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-(--color-primary) focus:ring-2 focus:ring-(--color-primary)/10"
+              >
+                <option value="">Select bathrooms</option>
+
+                {Array.from({ length: 8 }, (_, index) => index + 1).map(
+                  (number) => (
+                    <option key={number} value={number}>
+                      {number} {number === 1 ? "Bathroom" : "Bathrooms"}
+                    </option>
+                  ),
+                )}
+              </select>
+            </div>
+          )}
         </div>
 
-        <div className="form-field description-field">
-          <label htmlFor="description">Description</label>
+        {/* Description */}
+        <div className="mt-5 flex flex-col gap-1.5">
+          <label
+            htmlFor="description"
+            className="text-xs font-semibold text-gray-700"
+          >
+            Description <span className="text-red-500">*</span>
+          </label>
 
           <textarea
             id="description"
             name="description"
             value={formData.description}
             placeholder="Describe the property, amenities, nearby facilities, and other important details..."
-            rows={4}
+            rows={5}
+            required
             onChange={(event) =>
               handleChange("description", event.target.value)
             }
+            className="w-full resize-y rounded-md border border-gray-200 bg-white p-3 text-sm text-gray-700 outline-none transition placeholder:text-gray-400 focus:border-(--color-primary) focus:ring-2 focus:ring-(--color-primary)/10"
           />
         </div>
 
-        {/* <div className="image-upload-field">
-          <label>
-            Property Images <span>*</span>
-          </label>
-
-          <label htmlFor="property-images" className="image-upload-box">
-            <div className="upload-icon">♧</div>
-            <strong>Click to upload images</strong>
-            <span>or drag and drop</span>
-          </label>
-
-          <input
-            id="property-images"
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleImageChange}
-          />
-
-          {images.length > 0 && (
-            <p className="selected-images">{images.length} image(s) selected</p>
-          )}
-        </div> */}
-
-        <div className="add-property-actions">
-          <Link to="/dashboard" className="cancel-button">
+        {/* Actions */}
+        <div className="mt-6 flex flex-col-reverse gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:justify-end">
+          <Link
+            to="/dashboard"
+            className="flex h-11 items-center justify-center rounded-md border border-gray-300 px-6 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+          >
             Cancel
           </Link>
 

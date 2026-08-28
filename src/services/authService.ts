@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from "../utils/url";
 import { apiClient } from "./apiClient";
-
+import type { User } from "../types/user";
 
 export interface LoginRequest {
   email: string;
@@ -8,19 +8,11 @@ export interface LoginRequest {
 }
 
 export interface SignupRequest {
-   name?: string;
+  name?: string;
   email: string;
+  mobileNumber: string;
   password: string;
 }
-
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  username?: string;
-}
-
 
 export interface LoginResponse {
   message: string;
@@ -33,30 +25,21 @@ export interface SignupResponse {
   user: User;
 }
 
-export const loginApi = (
-  credentials: LoginRequest,
-): Promise<LoginResponse> => {
+export const loginApi = (credentials: LoginRequest): Promise<LoginResponse> => {
   return apiClient<LoginResponse>(API_ENDPOINTS.AUTH.LOGIN, {
     method: "POST",
     data: credentials,
   });
 };
 
-export const signupApi = (
-  data: SignupRequest,
-): Promise<SignupResponse> => {
+export const signupApi = (data: SignupRequest): Promise<SignupResponse> => {
   return apiClient<SignupResponse>(API_ENDPOINTS.AUTH.SIGNUP, {
     method: "POST",
     data,
   });
 };
 
-
-export const forgotPasswordApi = async (
-  payload: {
-    email: string;
-  },
-) => {
+export const forgotPasswordApi = async (payload: { email: string }) => {
   console.log("Forgot Password API called with payload:", payload);
   // const response = await apiClient.post(
   //   "/auth/forgot-password",
@@ -66,12 +49,10 @@ export const forgotPasswordApi = async (
   // return response.data;
 };
 
-export const resetPasswordApi = async (
-  payload: {
-    token: string;
-    password: string;
-  },
-) => {
+export const resetPasswordApi = async (payload: {
+  token: string;
+  password: string;
+}) => {
   console.log("Reset Password API called with payload:", payload);
   // const response = await apiClient.post(
   //   "/auth/reset-password",

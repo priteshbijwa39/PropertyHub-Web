@@ -14,8 +14,6 @@ export const apiClient = async <T>(
   const token = useAuthStore.getState().token;
   const url = `${API_BASE_URL}${endpoint}`;
 
-  console.log("API Token --->>>>", token);
-  console.log("API_BASE_URL --->>>>", url);
   try {
     const response = await axios({
       url: url,
@@ -37,4 +35,3 @@ export const apiClient = async <T>(
     );
   }
 };
-

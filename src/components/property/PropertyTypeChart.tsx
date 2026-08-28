@@ -1,3 +1,4 @@
+
 import {
   BarChart,
   Bar,
@@ -7,55 +8,68 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import type { Property } from "../../services/propertyService";
+import type { Property } from "../../types/property";
 
 interface PropertyTypeChartProps {
   properties: Property[];
 }
 
+interface PropertyTypeData {
+  type: string;
+  count: number;
+}
+
 const PropertyTypeChart = ({
   properties,
 }: PropertyTypeChartProps) => {
-  const propertyTypeData = properties.reduce(
-    (acc, property) => {
+  const propertyTypeData = properties.reduce<PropertyTypeData[]>(
+    (accumulator, property) => {
       const type = property.propertyType || "Other";
 
-      const existing = acc.find(
-        (item) => item.type === type
+      const existingType = accumulator.find(
+        (item) => item.type === type,
       );
 
-      if (existing) {
-        existing.count += 1;
+      if (existingType) {
+        existingType.count += 1;
       } else {
-        acc.push({
+        accumulator.push({
           type,
           count: 1,
         });
       }
 
-      return acc;
+      return accumulator;
     },
-    [] as { type: string; count: number }[]
+    [],
   );
 
   return (
-    <div className="dashboard-chart-card">
-      <div className="dashboard-chart-header">
+    <div className="w-full rounded-2xl border border-(--color-gray-200) bg-(--color-white) p-5 sm:p-6">
+      {/* Header */}
+      <div className="mb-5 flex items-center justify-between">
         <div>
-          <h2>Property Type Overview</h2>
-          <p>Properties by type</p>
+          <h2 className="text-lg font-bold text-(--color-gray-900)">
+            Property Type Overview
+          </h2>
+
+          <p className="mt-1 text-sm text-(--color-gray-500)">
+            Properties by type
+          </p>
         </div>
       </div>
 
+      {/* Empty State */}
       {propertyTypeData.length === 0 ? (
-        <div className="dashboard-chart-empty">
+        <div className="flex min-h-[320px] items-center justify-center text-center text-sm text-(--color-gray-500)">
           No property data available.
         </div>
       ) : (
-        <div className="dashboard-chart-wrapper">
+        /* Chart */
+        <div className="h-[320px] w-full">
           <ResponsiveContainer
             width="100%"
-            height={320}
+            height="100%"
           >
             <BarChart
               data={propertyTypeData}
@@ -73,7 +87,9 @@ const PropertyTypeChart = ({
 
               <XAxis
                 dataKey="type"
-                tick={{ fontSize: 12 }}
+                tick={{
+                  fontSize: 12,
+                }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -85,7 +101,9 @@ const PropertyTypeChart = ({
               />
 
               <Tooltip
-                cursor={{ fill: "rgba(37, 99, 235, 0.05)" }}
+                cursor={{
+                  fill: "rgba(37, 99, 235, 0.05)",
+                }}
               />
 
               <Bar
@@ -93,6 +111,7 @@ const PropertyTypeChart = ({
                 name="Properties"
                 radius={[6, 6, 0, 0]}
                 barSize={45}
+                fill="var(--color-primary)"
               />
             </BarChart>
           </ResponsiveContainer>
@@ -103,3 +122,4 @@ const PropertyTypeChart = ({
 };
 
 export default PropertyTypeChart;
+

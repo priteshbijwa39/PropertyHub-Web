@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import Button from "../../components/common/Button";
 import DashboardLayout from "../../components/layout/DashboardLayout";
-import {
-  getPropertyByIdApi,
-  type Property,
-} from "../../services/propertyService";
+import { getPropertyByIdApi } from "../../services/propertyService";
 import { toast } from "../../components/common/Toast";
+import { BATHROOM_TYPES, BEDROOM_TYPES } from "../../utils/propertyData";
+import type { Property } from "../../types/property";
+import { getTimeAgo } from "../../utils/helpers";
 
 const PropertyDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +17,7 @@ const PropertyDetails = () => {
   const fetchProperty = async () => {
     if (!id) {
       toast.error("Property ID not found");
+      setLoading(false);
       return;
     }
 
@@ -45,7 +46,7 @@ const PropertyDetails = () => {
 
   if (loading) {
     return (
-      <DashboardLayout>
+      <DashboardLayout title="">
         <div className="properties-loading">Loading property...</div>
       </DashboardLayout>
     );
@@ -53,7 +54,7 @@ const PropertyDetails = () => {
 
   if (!property) {
     return (
-      <DashboardLayout>
+      <DashboardLayout title="Property Details">
         <div className="properties-empty">
           <h2>Property Not Found</h2>
           <p>The property you're looking for doesn't exist.</p>
@@ -68,187 +69,226 @@ const PropertyDetails = () => {
     );
   }
 
+  /*
+   * Show bedrooms/bathrooms only for property types
+   * that require these fields.
+   */
+  const showBedrooms = BEDROOM_TYPES.includes(
+    property.propertyType as (typeof BEDROOM_TYPES)[number],
+  );
+
+  const showBathrooms = BATHROOM_TYPES.includes(
+    property.propertyType as (typeof BATHROOM_TYPES)[number],
+  );
+
+  const owner =
+    typeof property.owner === "object" && property.owner !== null
+      ? property.owner
+      : null;
+  const handleContactOwner = () => {
+    if (!owner?.mobileNumber) {
+      toast.error("Owner mobile number is not available.");
+      return;
+    }
+
+    window.location.href = `tel:${owner.mobileNumber}`;
+  };
   return (
-    <DashboardLayout>
-      <div className="property-details-top">
-        <Link to="/dashboard" className="back-link">
-          ← Back to Properties
-        </Link>
+  <DashboardLayout title="Property Details">
+  {/* Main Property Card */}
+  <div className="grid grid-cols-1 gap-6 rounded-xl border border-gray-100 bg-white p-4 shadow-sm lg:grid-cols-[1.4fr_1fr] lg:p-6">
+    {/* Property Gallery */}
+    <div className="min-w-0">
+      <img
+        src={
+          property.images?.[0] ||
+          "/assets/images/login-property.jpg"
+        }
+        alt={property.title}
+        className="h-[330px] w-full rounded-lg object-cover"
+      />
+
+      {property.images && property.images.length > 0 && (
+        <div className="mt-2.5 grid grid-cols-4 gap-2.5">
+          {property.images.map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt={`Property view ${index + 1}`}
+              className="h-[70px] w-full cursor-pointer rounded-md object-cover transition-opacity hover:opacity-80"
+            />
+          ))}
+        </div>
+      )}
+    </div>
+
+    {/* Property Summary */}
+    <div className="flex flex-col justify-center">
+      <div className="flex flex-col">
+        <h1 className="text-2xl font-bold text-gray-900">
+          {property.title}
+        </h1>
+
+        <p className="mt-2 text-sm text-gray-500">
+          ◉ {property.location}
+          {property.city && `, ${property.city}`}
+          {property.state && `, ${property.state}`}
+        </p>
+         {property.createdAt && (
+    <p className="mt-1 text-xs text-gray-400">
+      Listed {getTimeAgo(property.createdAt)}
+    </p>
+  )}
       </div>
 
-      <div className="property-details-card">
-        <div className="property-gallery">
-          <img
-            src={property.images?.[0] || "/assets/images/login-property.jpg"}
-            alt={property.title}
-            className="property-main-image"
-          />
+      {/* Price */}
+      <strong className="mt-6 text-xl font-bold text-(--color-primary)">
+        ₹ {property.price.toLocaleString("en-IN")}
+      </strong>
 
-          <div className="property-thumbnails">
-            {property.images?.map((image, index) => (
-              <img key={index} src={image} alt={`Property view ${index + 1}`} />
-            ))}
-          </div>
+      {/* Property Basic Information */}
+      <div className="mt-6 grid grid-cols-2 gap-3 border-t border-gray-100 pt-5 sm:grid-cols-3">
+        {/* Listing Type */}
+        <div className="flex flex-col gap-1">
+          <span className="text-[11px] text-gray-500">
+            Listing Type
+          </span>
+
+          <strong className="text-sm text-gray-900">
+            {property.listingType || "N/A"}
+          </strong>
         </div>
 
-        <div className="property-summary">
-          <div className="property-title-row">
-            <div>
-              <h1>{property.title}</h1>
+        {/* Category */}
+        <div className="flex flex-col gap-1">
+          <span className="text-[11px] text-gray-500">
+            Category
+          </span>
 
-              <p className="property-location">
-                ◉ {property.location}, {property.city}
-              </p>
-            </div>
+          <strong className="text-sm text-gray-900">
+            {property.propertyCategory || "N/A"}
+          </strong>
+        </div>
 
-            <strong className="property-details-price">
-              ₹ {property.price.toLocaleString("en-IN")}
+        {/* Property Type */}
+        <div className="flex flex-col gap-1">
+          <span className="text-[11px] text-gray-500">
+            Property Type
+          </span>
+
+          <strong className="text-sm text-gray-900">
+            {property.propertyType || "N/A"}
+          </strong>
+        </div>
+
+        {/* Area */}
+        <div className="flex flex-col gap-1">
+          <span className="text-[11px] text-gray-500">
+            Area
+          </span>
+
+          <strong className="text-sm text-gray-900">
+            {property.area?.toLocaleString("en-IN")} sqft
+          </strong>
+        </div>
+
+        {/* Bedrooms */}
+        {showBedrooms && property.bedrooms != null && (
+          <div className="flex flex-col gap-1">
+            <span className="text-[11px] text-gray-500">
+              Bedrooms
+            </span>
+
+            <strong className="text-sm text-gray-900">
+              {property.bedrooms}{" "}
+              {property.bedrooms === 1
+                ? "Bedroom"
+                : "Bedrooms"}
             </strong>
           </div>
+        )}
 
-          <div className="property-info">
-            <div>
-              <span>Bedrooms</span>
-              <strong>{property.bedrooms ?? 0} Beds</strong>
-            </div>
+        {/* Bathrooms */}
+        {showBathrooms && property.bathrooms != null && (
+          <div className="flex flex-col gap-1">
+            <span className="text-[11px] text-gray-500">
+              Bathrooms
+            </span>
 
-            <div>
-              <span>Bathrooms</span>
-              <strong>{property.bathrooms ?? 0} Baths</strong>
-            </div>
-
-            <div>
-              <span>Area</span>
-              <strong>{property.area} sqft</strong>
-            </div>
+            <strong className="text-sm text-gray-900">
+              {property.bathrooms}{" "}
+              {property.bathrooms === 1
+                ? "Bathroom"
+                : "Bathrooms"}
+            </strong>
           </div>
+        )}
+      </div>
+    </div>
+  </div>
+
+  {/* Property Description */}
+  <div className="mt-4 rounded-xl border border-gray-100 bg-white p-5 shadow-sm md:p-6">
+    <h2 className="text-base font-bold text-gray-900">
+      Property Description
+    </h2>
+
+    <p className="mt-2.5 max-w-[900px] text-sm leading-7 text-gray-500">
+      {property.description || "No description available."}
+    </p>
+  </div>
+
+  {/* Contact Owner */}
+  <div className="mt-4 flex flex-col gap-6 rounded-xl bg-white p-5 shadow-sm md:p-6 lg:flex-row lg:items-center lg:justify-between">
+    {/* Contact CTA */}
+    <div>
+      <h2 className="text-base font-bold text-gray-900">
+        Interested in this property?
+      </h2>
+
+      <p className="mt-1 text-sm text-gray-500">
+        Contact the owner for more information.
+      </p>
+
+      <Button
+        type="button"
+        variant="primary"
+        onClick={handleContactOwner}
+        className="mt-4 min-w-[160px]"
+      >
+        Contact Owner
+      </Button>
+    </div>
+
+    {/* Owner Details */}
+    <div className="w-full rounded-lg border border-gray-100 bg-gray-50 p-4 lg:w-auto lg:min-w-[280px]">
+      {owner ? (
+        <div className="flex flex-col">
+          <h3 className="text-base font-semibold text-gray-900">
+            {owner.name || "Property Owner"}
+          </h3>
+
+          {owner.email && (
+            <p className="mt-1 text-sm text-gray-500">
+              {owner.email}
+            </p>
+          )}
+
+          {owner.mobileNumber && (
+            <p className="mt-1 text-sm text-gray-500">
+              {owner.mobileNumber}
+            </p>
+          )}
         </div>
-      </div>
-
-      <div className="property-description-card">
-        <h2>Property Description</h2>
-
-        <p>{property.description || "No description available."}</p>
-      </div>
-
-      <div className="property-contact-card">
-        <div>
-          <h2>Interested in this property?</h2>
-          <p>Contact the owner for more information.</p>
-        </div>
-
-        <Button type="button" variant="primary" disabled={true}>
-          Contact Owner
-        </Button>
-      </div>
-    </DashboardLayout>
+      ) : (
+        <p className="text-sm text-gray-500">
+          Owner details are not available.
+        </p>
+      )}
+    </div>
+  </div>
+</DashboardLayout>
   );
 };
 
 export default PropertyDetails;
-
-// import { Link, useParams } from "react-router";
-// import Button from "../../components/common/Button";
-// import DashboardLayout from "../../components/layout/DashboardLayout";
-
-// const PropertyDetails = () => {
-//   const { id } = useParams();
-
-//   return (
-//         <DashboardLayout>
-//         <div className="property-details-top">
-//           <Link to="/dashboard" className="back-link">
-//             ← Back to Properties
-//           </Link>
-//         </div>
-
-//         <div className="property-details-card">
-//           <div className="property-gallery">
-//             <img
-//               src="/assets/images/login-property.jpg"
-//               alt="3 BHK Luxury Villa"
-//               className="property-main-image"
-//             />
-
-//             <div className="property-thumbnails">
-//               <img
-//                 src="/assets/images/login-property.jpg"
-//                 alt="Property view 1"
-//               />
-
-//               <img
-//                 src="/assets/images/login-property.jpg"
-//                 alt="Property view 2"
-//               />
-
-//               <img
-//                 src="/assets/images/login-property.jpg"
-//                 alt="Property view 3"
-//               />
-
-//               <img
-//                 src="/assets/images/login-property.jpg"
-//                 alt="Property view 4"
-//               />
-//             </div>
-//           </div>
-
-//           <div className="property-summary">
-//             <div className="property-title-row">
-//               <div>
-//                 <h1>3 BHK Luxury Villa</h1>
-//                 <p className="property-location">
-//                   ◉ Indore, Madhya Pradesh
-//                 </p>
-//               </div>
-
-//               <strong className="property-details-price">
-//                 ₹ 68,00,000
-//               </strong>
-//             </div>
-
-//             <div className="property-info">
-//               <div>
-//                 <span>Bedrooms</span>
-//                 <strong>3 Beds</strong>
-//               </div>
-
-//               <div>
-//                 <span>Bathrooms</span>
-//                 <strong>3 Baths</strong>
-//               </div>
-
-//               <div>
-//                 <span>Area</span>
-//                 <strong>1800 sqft</strong>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="property-description-card">
-//           <h2>Property Description</h2>
-
-//           <p>
-//             Beautiful 3 BHK luxury villa with modern amenities,
-//             spacious rooms, modular kitchen, garden and parking space.
-//             Located in prime location of Indore.
-//           </p>
-//         </div>
-
-//         <div className="property-contact-card">
-//           <div>
-//             <h2>Interested in this property?</h2>
-//             <p>Contact the owner for more information.</p>
-//           </div>
-
-//           <Button type="button" variant="primary">
-//             Contact Owner
-//           </Button>
-//         </div>
-
-//     </DashboardLayout>
-//   );
-// };
-
-// export default PropertyDetails;

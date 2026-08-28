@@ -6,6 +6,7 @@ import { validateEmail, validatePassword } from "../../utils/validation";
 import { useAuthStore } from "../../store/authStore";
 import { loginApi } from "../../services/authService";
 import { toast } from "../../components/common/Toast";
+import { Lock, Mail } from "lucide-react";
 
 interface LoginForm {
   email: string;
@@ -109,23 +110,30 @@ const Login = () => {
   };
 
   return (
-    <main className="login-page">
-      <section className="login-container">
-        <div className="login-form-section">
-          <div className="login-form-wrapper">
-            <div className="login-brand">
-              <span className="brand-property">Property</span>
-
-              <span className="brand-hub">Hub</span>
+    <main className="min-h-screen bg-(--color-background)">
+      <section className="grid min-h-screen grid-cols-1 md:grid-cols-2">
+        {/* Left - Login Form */}
+        <div className="flex min-h-screen items-center justify-center bg-(--color-white) px-6 py-8 sm:px-8 lg:px-12">
+          <div className="w-full max-w-[440px]">
+            {/* Brand */}
+            <div className="mb-10 text-2xl font-bold sm:mb-12">
+              <span className="text-(--color-primary)">Property</span>
+              <span className="text-(--color-secondary-dark)">Hub</span>
             </div>
 
-            <div className="login-heading">
-              <h1>Welcome Back! 👋</h1>
+            {/* Heading */}
+            <div className="mb-8">
+              <h1 className="mb-2 text-3xl font-bold text-(--color-black) sm:text-4xl">
+                Welcome Back!
+              </h1>
 
-              <p>Login to manage your properties</p>
+              <p className="text-base text-(--color-gray-500)">
+                Login to manage your properties
+              </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="login-form">
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <Input
                 label="Email"
                 type="email"
@@ -134,6 +142,7 @@ const Login = () => {
                 placeholder="Enter your email"
                 required
                 error={errors.email}
+                icon={<Mail size={18} />}
                 onChange={(event) => handleChange("email", event.target.value)}
               />
 
@@ -145,50 +154,80 @@ const Login = () => {
                 placeholder="Enter your password"
                 required
                 error={errors.password}
+                icon={<Lock size={18} />}
                 onChange={(event) =>
                   handleChange("password", event.target.value)
                 }
               />
 
-              <div className="login-options">
-                <label className="remember-me">
+              {/* Login Options */}
+              <div className="flex items-center justify-between text-sm">
+                <label className="flex cursor-pointer items-center gap-2 text-(--color-gray-700)">
                   <input
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(event) =>
                       handleRememberMeChange(event.target.checked)
                     }
+                    className="h-4 w-4 accent-(--color-primary)"
                   />
 
                   <span>Remember me</span>
                 </label>
 
-                {/* <Link to="/forgot-password" className="forgot-password" >
-                  Forgot Password?
-                </Link> */}
+                {/* Forgot Password */}
+
+                {/* <Link
+              to="/forgot-password"
+              // to="/reset-password"
+              className="text-sm text-(--color-primary) hover:underline"
+            >
+              Forgot Password?
+            </Link> */}
               </div>
 
+              {/* Login Button */}
               <Button
                 type="submit"
                 variant="primary"
                 loading={loading}
-                className="login-button"
+                className="w-full"
               >
                 Login
               </Button>
             </form>
 
-            <p className="signup-link">
-              Don't have an account? <Link to="/signup">Create an account</Link>
+            {/* Signup Link */}
+            <p className="mt-8 text-center text-sm text-(--color-gray-500)">
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="font-semibold text-(--color-primary) hover:underline"
+              >
+                Create an account
+              </Link>
             </p>
           </div>
         </div>
 
-        <div className="login-image-section">
-          <div className="login-overlay">
-            <h2>Find Your Dream Property</h2>
+        {/* Right - Image */}
 
-            <p>
+        <div
+          className="relative hidden min-h-screen overflow-hidden bg-cover bg-center md:block"
+          style={{
+            backgroundImage: "url('/assets/images/login-property.jpg')",
+          }}
+        >
+          {/* Blue Image Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-950/85 via-blue-900/55 to-blue-600/25" />
+
+          {/* Bottom Blue Shadow */}
+          <div className="absolute inset-x-0 bottom-0 flex min-h-[45%] flex-col justify-end bg-gradient-to-t from-blue-950/95 via-blue-900/55 to-transparent p-8 text-white lg:p-16">
+            <h2 className="mb-4 text-3xl font-bold text-white">
+              Find Your Dream Property
+            </h2>
+
+            <p className="max-w-[520px] text-lg leading-7 text-blue-50/90">
               Discover properties that match your lifestyle and make your next
               move with PropertyHub.
             </p>

@@ -2,18 +2,17 @@ import { useAuthStore } from "../../store/authStore";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import PropertyCard from "../../components/property/PropertyCard";
 import { useEffect, useState } from "react";
-import {
-  getAllPropertiesApi,
-  type Property,
-} from "../../services/propertyService";
+import { getAllPropertiesApi } from "../../services/propertyService";
 import { toast } from "../../components/common/Toast";
 import { useFavoriteStore } from "../../store/favoriteStore";
 import PropertyTypeChart from "../../components/property/PropertyTypeChart";
+import type { Property } from "../../types/property";
+import { Link } from "react-router";
 const Dashboard = () => {
   const user = useAuthStore((state) => state?.user);
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const favoriteCount = useFavoriteStore((state) => state.favoriteCount);
   const fetchProperties = async () => {
     try {
       setLoading(true);
@@ -37,19 +36,14 @@ const Dashboard = () => {
   const myProperties = properties.filter(
     (property) => property?.owner === user?.id,
   ).length;
-  const { favorites } = useFavoriteStore();
   const recentProperties = [...properties]
     .sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        new Date(b.createdAt ?? 0).getTime() -
+        new Date(a.createdAt ?? 0).getTime(),
     )
     .slice(0, 5);
-  // const totalPropertyValue = properties.reduce(
-  //   (total, property) => total + property.price,
-  //   0,
-  // );
-  // const averagePropertyPrice =
-  //   properties.length > 0 ? totalPropertyValue / properties.length : 0;
+
   const propertyPrices = properties.map((property) => property.price);
 
   const minimumPropertyPrice =
@@ -71,117 +65,149 @@ const Dashboard = () => {
   };
 
   return (
-    <DashboardLayout>
-      <header className="dashboard-header">
-        <div>
-          <h1>Dashboard</h1>
-        </div>
-
-        {/* <div className="dashboard-header-actions">
-          <input
-            type="text"
-            placeholder="Search properties..."
-            className="dashboard-search"
-          />
-
-          <button className="header-icon" type="button">
-            ♧
-          </button>
-
-          <button className="header-icon" type="button">
-            ♡
-          </button>
-        </div> */}
-      </header>
-
-      <div className="dashboard-welcome">
-        <h2>Welcome back, {user?.name}! 👋</h2>
-        <p>Here's what's happening with your properties today.</p>
-      </div>
-      <section className="dashboard-stats">
-        <div className="stat-card">
-          <span className="stat-card-label">Total Properties</span>
-
-          <strong>{loading ? "..." : totalProperties}</strong>
-
-          <small>All properties listed on PropertyHub</small>
-        </div>
-
-        <div className="stat-card">
-          <span className="stat-card-label">My Properties</span>
-
-          <strong>{loading ? "..." : myProperties}</strong>
-
-          <small>Properties added by you</small>
-        </div>
-
-        <div className="stat-card">
-          <span className="stat-card-label">My Favorites</span>
-
-          <strong>{favorites.length}</strong>
-
-          <small>Properties saved by you</small>
-        </div>
-
-        {/* <div className="stat-card">
-          <span>Total Views</span>
-          <strong>1,245</strong>
-          <small>↗ 10% from last month</small>
-        </div>
-
-        <div className="stat-card">
-          <span>Total Inquiries</span>
-          <strong>56</strong>
-          <small>↗ 8% from last month</small>
-        </div> */}
-      </section>
-
-      <div className="property-price-range">
-        <div className="property-price-range-header">
+    <DashboardLayout
+      title="Dashboard"
+      subtitle="Overview of your property management"
+    >
+      {/* Welcome */}
+      <div className="mt-2 overflow-hidden rounded-2xl bg-[linear-gradient(to_right,var(--color-primary),#1e40af)] px-6 py-6 sm:px-8">
+        <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
+          {/* Left Content */}
           <div>
-            <span>Property Price Range</span>
-            <strong>Available Properties</strong>
+            <h2 className="text-lg font-bold text-white! sm:text-xl">
+              Welcome back, {user?.name}!
+            </h2>
+
+            <p className="mt-1 text-sm text-white/80">
+              Here's what's happening with your properties today.
+            </p>
           </div>
 
-          <span>{properties.length} Properties</span>
+          {/* Browse Button */}
+          <Link
+            to="/all-properties"
+            className="inline-flex shrink-0 items-center justify-center rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-(--color-primary) shadow-sm transition-all duration-200 hover:bg-gray-100 hover:shadow-md"
+          >
+            Browse
+          </Link>
+        </div>
+      </div>
+      {/* Stats */}
+      <section className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {/* Total Properties */}
+        <div className="rounded-lg border border-(--color-gray-100) bg-(--color-white) p-5 shadow-(--shadow-sm)">
+          <span className="block text-xs text-(--color-gray-500)">
+            Total Properties
+          </span>
+
+          <strong className="mt-1 block text-2xl font-bold text-(--color-gray-900)">
+            {loading ? "..." : totalProperties}
+          </strong>
+
+          <small className="text-[10px] text-green-600">
+            All properties listed on PropertyHub
+          </small>
         </div>
 
-        <div className="property-price-range-values">
-          <div>
-            <small>Minimum</small>
-            <strong>
+        {/* My Properties */}
+        <div className="rounded-lg border border-(--color-gray-100) bg-(--color-white) p-5 shadow-(--shadow-sm)">
+          <span className="block text-xs text-(--color-gray-500)">
+            My Properties
+          </span>
+
+          <strong className="mt-1 block text-2xl font-bold text-(--color-gray-900)">
+            {loading ? "..." : myProperties}
+          </strong>
+
+          <small className="text-[10px] text-green-600">
+            Properties added by you
+          </small>
+        </div>
+
+        {/* Favorites */}
+        <div className="rounded-lg border border-(--color-gray-100) bg-(--color-white) p-5 shadow-(--shadow-sm)">
+          <span className="block text-xs text-(--color-gray-500)">
+            My Favorites
+          </span>
+
+          <strong className="mt-1 block text-2xl font-bold text-(--color-gray-900)">
+            {favoriteCount}
+          </strong>
+
+          <small className="text-[10px] text-green-600">
+            Properties saved by you
+          </small>
+        </div>
+      </section>
+
+      {/* Property Price Range */}
+      <section className="mt-6 rounded-2xl border border-(--color-gray-200) bg-(--color-white) p-5 sm:p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <span className="text-lg font-bold text-(--color-gray-900)">
+              Property Price Range
+            </span>
+
+            <strong className="text-[13px] font-normal text-(--color-gray-500)">
+              Available Properties
+            </strong>
+          </div>
+
+          <span className="shrink-0 rounded-full bg-(--color-gray-100) px-3 py-1.5 text-[13px] font-semibold text-(--color-gray-600)">
+            {properties.length} Properties
+          </span>
+        </div>
+
+        {/* Values */}
+        <div className="mt-7 grid grid-cols-1 items-end gap-4 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-5">
+          {/* Minimum */}
+          <div className="flex flex-col gap-1">
+            <small className="text-xs text-(--color-gray-500)">Minimum</small>
+
+            <strong className="text-xl font-bold text-(--color-gray-900)">
               {loading ? "..." : formatIndianCurrency(minimumPropertyPrice)}
             </strong>
           </div>
 
-          <div className="price-range-line">
-            <span />
+          {/* Range Line */}
+          <div className="relative order-3 h-1.5 w-full rounded-full bg-(--color-gray-200) sm:order-none sm:mb-2">
+            <span className="absolute inset-0 h-full rounded-full bg-(--color-primary)" />
           </div>
 
-          <div>
-            <small>Maximum</small>
-            <strong>
+          {/* Maximum */}
+          <div className="flex flex-col gap-1">
+            <small className="text-xs text-(--color-gray-500)">Maximum</small>
+
+            <strong className="text-xl font-bold text-(--color-gray-900)">
               {loading ? "..." : formatIndianCurrency(maximumPropertyPrice)}
             </strong>
           </div>
         </div>
-      </div>
+      </section>
 
-      <section className="dashboard-chart-section">
+      {/* Property Type Chart */}
+      <section className="mt-6 w-full">
         <PropertyTypeChart properties={properties} />
       </section>
 
-      <section className="recent-properties">
-        <div className="section-header">
+      {/* Recent Properties */}
+      <section className="mt-8 w-full">
+        {/* Section Header */}
+        <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <h2>Recent Properties</h2>
-            <p>Recently added properties</p>
-          </div>
+            <h2 className="text-xl font-bold text-(--color-gray-900)">
+              Recent Properties
+            </h2>
 
-          {/* <Link to="/properties">View All</Link> */}
+            <p className="mt-1.5 text-sm text-(--color-gray-500)">
+              Recently added properties
+            </p>
+          </div>
         </div>
 
-        <div className="property-grid">
+        {/* Property Grid */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {recentProperties.map((property) => (
             <PropertyCard key={property._id} property={property} />
           ))}
