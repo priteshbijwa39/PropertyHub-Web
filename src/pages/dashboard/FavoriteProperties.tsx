@@ -19,12 +19,14 @@ const setFavoriteCount = useFavoriteStore(
       setLoading(true);
 
       const response = await getFavoriteProperties();
+      const safeFavorites = Array.isArray(response) ? response : [];
 
-      setFavorites(response);
-        setFavoriteCount(response.length);
+      setFavorites(safeFavorites);
+      setFavoriteCount(safeFavorites.length);
     } catch (error) {
       console.error("Failed to fetch favorite properties:", error);
-
+      setFavorites([]);
+      setFavoriteCount(0);
       toast.error("Failed to load favorite properties.");
     } finally {
       setLoading(false);

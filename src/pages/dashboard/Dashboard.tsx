@@ -17,9 +17,14 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const response = await getAllPropertiesApi();
-      setProperties(response.properties);
+      const safeProperties = Array.isArray(response?.properties)
+        ? response.properties
+        : [];
+
+      setProperties(safeProperties);
     } catch (error) {
       console.error("Get Properties Error:", error);
+      setProperties([]);
       toast.error(
         error instanceof Error ? error.message : "Failed to load properties",
       );
