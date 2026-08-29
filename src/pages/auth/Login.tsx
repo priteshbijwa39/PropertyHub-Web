@@ -124,7 +124,7 @@ const Login = () => {
             {/* Heading */}
             <div className="mb-8">
               <h1 className="mb-2 text-3xl font-bold text-(--color-black) sm:text-4xl">
-                Welcome Back!
+                Welcome
               </h1>
 
               <p className="text-base text-(--color-gray-500)">

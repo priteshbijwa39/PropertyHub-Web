@@ -18,7 +18,7 @@ const AppRoutes = () => {
     <BrowserRouter>
       <Routes>
         {/* Initial Route */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
@@ -26,16 +26,18 @@ const AppRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route path="/reset-password" element={<ResetPassword />} />
-        {/* Protected Routes */}
+        {/* Public browsing routes */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/properties/:id" element={<PropertyDetails />} />
+        <Route path="/all-properties" element={<AllProperties />} />
+
+        {/* Account and seller routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/add-property" element={<AddProperty />} />
           <Route path="/my-properties" element={<MyProperties />} />
-          <Route path="/properties/:id" element={<PropertyDetails />} />
           <Route path="/edit-property/:id" element={<EditProperties />} />
           <Route path="/favorites" element={<FavoriteProperties />} />
-          <Route path="/all-properties" element={<AllProperties />} />
-           <Route path="/Profile" element={<Profile />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
 
         {/* Unknown route */}

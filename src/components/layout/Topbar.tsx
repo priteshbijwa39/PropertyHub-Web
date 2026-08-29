@@ -1,5 +1,5 @@
 import { useAuthStore } from "../../store/authStore";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 interface TopbarProps {
   title: string;
   subtitle?: string;
@@ -9,6 +9,7 @@ interface TopbarProps {
 const Topbar = ({ title, subtitle,  showProfile = true, }: TopbarProps) => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state?.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   return (
     <header className="sticky top-0 z-30 flex h-[72px] w-full items-center justify-between gap-4 border-b border-[var(--color-gray-200)] bg-white/90 px-4 backdrop-blur-md sm:px-6">
       {/* Title & Subtitle */}
@@ -25,7 +26,7 @@ const Topbar = ({ title, subtitle,  showProfile = true, }: TopbarProps) => {
       </div>
 
       {/* Right Section */}
-      {showProfile && (
+      {showProfile && isAuthenticated ? (
       <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         <button
           type="button"
@@ -36,7 +37,19 @@ const Topbar = ({ title, subtitle,  showProfile = true, }: TopbarProps) => {
           {user?.name?.charAt(0)?.toUpperCase() || "U"}
         </button>
       </div>
-      )}
+      ) : !isAuthenticated ? (
+        <div className="flex shrink-0 items-center gap-3 text-sm">
+          <Link to="/login" className="font-semibold text-[var(--color-primary)] hover:underline">
+            Login
+          </Link>
+          <Link
+            to="/signup"
+            className="rounded-lg bg-[var(--color-primary)] px-3 py-2 font-semibold text-white hover:opacity-90"
+          >
+            Sign up
+          </Link>
+        </div>
+      ) : null}
     </header>
   );
 };

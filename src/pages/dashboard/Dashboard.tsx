@@ -33,9 +33,9 @@ const Dashboard = () => {
   }, []);
 
   const totalProperties = properties.length;
-  const myProperties = properties.filter(
-    (property) => property?.owner === user?.id,
-  ).length;
+  const myProperties = user
+    ? properties.filter((property) => property?.owner === user.id).length
+    : 0;
   const recentProperties = [...properties]
     .sort(
       (a, b) =>
@@ -75,11 +75,13 @@ const Dashboard = () => {
           {/* Left Content */}
           <div>
             <h2 className="text-lg font-bold text-white! sm:text-xl">
-              Welcome back, {user?.name}!
+              {user ? `Welcome , ${user.name}!` : "Explore PropertyHub"}
             </h2>
 
             <p className="mt-1 text-sm text-white/80">
-              Here's what's happening with your properties today.
+              {user
+                ? "Here's what's happening with your properties today."
+                : "Discover properties that match your lifestyle and budget."}
             </p>
           </div>
 

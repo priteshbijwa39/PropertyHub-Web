@@ -12,6 +12,7 @@ interface SidebarProps {
 
 const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
   const logout = useAuthStore((state) => state.logout);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   const navigate = useNavigate();
 
@@ -20,7 +21,7 @@ const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
   const handleLogout = () => {
     logout();
     setShowLogoutModal(false);
-    navigate("/login");
+    navigate("/dashboard");
   };
 
   return (
@@ -75,7 +76,7 @@ const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
         {/* Navigation */}
         <nav className="flex flex-1 flex-col py-5 ">
           <div className="flex flex-col gap-2 px-5">
-            {NAV_ITEMS.map(({ label, href, icon: Icon }) => (
+            {NAV_ITEMS.filter(({ requiresAuth }) => !requiresAuth || isAuthenticated).map(({ label, href, icon: Icon }) => (
               <NavLink
                 key={href}
                 to={href}
@@ -101,8 +102,8 @@ const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
         </nav>
 
         {/* Bottom Section */}
-        <div className="border-t border-white/10 px-4! py-4! ">
-          <button
+        <div className="border-t border-white/10 px-4! py-4!">
+          {isAuthenticated ? <button
             type="button"
             title={isCollapsed ? "Logout" : undefined}
             className={`flex min-h-11 w-full items-center rounded-lg text-sm text-white/90 transition-all duration-200 hover:bg-white/10 hover:text-white ${
@@ -113,7 +114,16 @@ const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
             <LogOut size={20} strokeWidth={2} className="shrink-0" />
 
             {!isCollapsed && <span className="whitespace-nowrap">Logout</span>}
-          </button>
+          </button> : (
+            <NavLink
+              to="/login"
+              className={`flex min-h-11 w-full items-center rounded-lg text-sm text-white/90 transition-all duration-200 hover:bg-white/10 hover:text-white ${
+                isCollapsed ? "justify-center px-0" : "justify-center px-4"
+              }`}
+            >
+              Login
+            </NavLink>
+          )}
         </div>
       </aside>
 

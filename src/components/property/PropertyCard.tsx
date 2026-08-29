@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router";
 import Button from "../common/Button";
 import { toggleFavorite } from "../../services/propertyService";
 import { useState } from "react";
+import { useAuthStore } from "../../store/authStore";
 import { toast } from "../common/Toast";
 import type { Property } from "../../types/property";
 import { Heart } from "lucide-react";
@@ -20,6 +21,7 @@ const PropertyCard = ({
   onFavoriteChange,
 }: PropertyCardProps) => {
   const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   const [favorite, setFavorite] = useState(
     property?.isFavorite || false
@@ -35,6 +37,11 @@ const PropertyCard = ({
     event.stopPropagation();
 
     if (favoriteLoading) return;
+    if (!isAuthenticated) {
+      toast.error("Please login to save favorite properties.");
+      navigate("/login");
+      return;
+    }
 
     try {
       setFavoriteLoading(true);

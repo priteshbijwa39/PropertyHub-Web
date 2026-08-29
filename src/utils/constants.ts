@@ -44,25 +44,30 @@ export const NAV_ITEMS = [
     label: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
+    requiresAuth: false,
   },
   {
     label: "All Properties",
     href: "/all-properties",
     icon: Building,
+    requiresAuth: false,
   },
   {
     label: "My Properties",
     href: "/my-properties",
     icon: Home,
+    requiresAuth: true,
   },
   {
     label: "Add Property",
     href: "/add-property",
     icon: PlusCircle,
+    requiresAuth: true,
   },
   {
     label: "Favorites",
     href: "/favorites",
     icon: Heart,
+    requiresAuth: true,
   },
 ];
