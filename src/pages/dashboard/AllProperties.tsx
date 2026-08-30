@@ -102,23 +102,7 @@ const AllProperties = () => {
         </div>
       ) : (
         <>
-          {/* Results Header */}
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Properties
-              </h2>
-
-              <p className="mt-1 text-sm text-gray-500">
-                {filteredProperties.length}{" "}
-                {filteredProperties.length === 1
-                  ? "property"
-                  : "properties"}{" "}
-                found
-              </p>
-            </div>
-          </div>
-
+  
           {/* Property Grid */}
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {filteredProperties.map((property) => (
