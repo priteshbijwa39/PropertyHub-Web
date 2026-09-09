@@ -6,6 +6,7 @@ import { validateEmail, validatePassword } from "../../utils/validation";
 import { signupApi } from "../../services/authService";
 import { toast } from "../../components/common/Toast";
 import { Lock, Mail, Phone, User } from "lucide-react";
+import LanguageSelector from "../../components/common/LanguageSelector";
 
 interface SignupForm {
   username: string;
@@ -120,10 +121,12 @@ const Signup = () => {
         <div className="flex min-h-screen items-center justify-center bg-(--color-white) px-6 py-8 sm:px-8 lg:px-12">
           <div className="w-full max-w-[440px]">
             {/* Brand */}
-            <div className="mb-10 text-2xl font-bold sm:mb-12">
-              <span className="text-(--color-primary)">Property</span>
-
-              <span className="text-(--color-secondary-dark)">Hub</span>
+            <div className="mb-10 flex items-start justify-between gap-4 text-2xl font-bold sm:mb-12">
+              <div>
+                <span className="text-(--color-primary)">Property</span>
+                <span className="text-(--color-secondary-dark)">Hub</span>
+              </div>
+              <LanguageSelector compact />
             </div>
 
             {/* Heading */}
