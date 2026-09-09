@@ -4,6 +4,7 @@ import { useAuthStore } from "../../store/authStore";
 import { LogOut, Menu, X, House } from "lucide-react";
 import Button from "../common/Button";
 import { NAV_ITEMS } from "../../utils/constants";
+import { translate, useLanguageStore, type TranslationKey } from "../../store/languageStore";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -22,10 +23,18 @@ const Sidebar = ({
 }: SidebarProps) => {
   const logout = useAuthStore((state) => state.logout);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const language = useLanguageStore((state) => state.language);
 
   const navigate = useNavigate();
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const navLabels: Record<string, TranslationKey> = {
+    Dashboard: "dashboard",
+    "All Properties": "allProperties",
+    "My Properties": "myProperties",
+    "Add Property": "addProperty",
+    Favorites: "favorites",
+  };
 
   const handleLogout = () => {
    logout();
@@ -99,7 +108,7 @@ const Sidebar = ({
                key={href}
                to={href}
                onClick={isMobile ? onClose : undefined}
-               title={isCollapsed ? label : undefined}
+               title={isCollapsed ? translate(language, navLabels[label]) : undefined}
                className={({ isActive }) =>
                  `flex min-h-11 items-center rounded-lg text-sm transition-all duration-200 ${
                    isCollapsed && !isMobile ? "justify-center px-0" : "gap-3 px-4"
@@ -113,7 +122,9 @@ const Sidebar = ({
                <Icon size={20} strokeWidth={2} className="shrink-0" />
 
                {(!isCollapsed || isMobile) && (
-                 <span className="whitespace-nowrap">{label}</span>
+                 <span className="whitespace-nowrap">
+                   {translate(language, navLabels[label])}
+                 </span>
                )}
              </NavLink>
            ))}
@@ -124,7 +135,7 @@ const Sidebar = ({
          {isAuthenticated ? (
            <button
              type="button"
-             title={isCollapsed ? "Logout" : undefined}
+             title={isCollapsed ? translate(language, "logout") : undefined}
              className={`flex min-h-11 w-full items-center rounded-lg text-sm text-white/90 transition-all duration-200 hover:bg-white/10 hover:text-white ${
                isCollapsed && !isMobile ? "justify-center px-0" : "gap-3 px-4"
              }`}
@@ -132,7 +143,11 @@ const Sidebar = ({
            >
              <LogOut size={20} strokeWidth={2} className="shrink-0" />
 
-             {(!isCollapsed || isMobile) && <span className="whitespace-nowrap">Logout</span>}
+             {(!isCollapsed || isMobile) && (
+               <span className="whitespace-nowrap">
+                 {translate(language, "logout")}
+               </span>
+             )}
            </button>
          ) : (
            <NavLink
@@ -142,7 +157,7 @@ const Sidebar = ({
                isCollapsed && !isMobile ? "justify-center px-0" : "justify-center px-4"
              }`}
            >
-             Login
+             {translate(language, "login")}
            </NavLink>
          )}
        </div>
@@ -162,7 +177,9 @@ const Sidebar = ({
            </div>
 
            <div className="mt-4 text-center">
-             <h2 className="text-xl font-semibold text-black">Logout?</h2>
+             <h2 className="text-xl font-semibold text-black">
+               {translate(language, "logout")}?
+             </h2>
 
              <p className="mt-2 text-sm text-gray-500">
                Are you sure you want to logout?
@@ -181,7 +198,7 @@ const Sidebar = ({
              <Button
                type="button"
                variant="danger"
-               children="Logout"
+               children={translate(language, "logout")}
                className="w-full"
                onClick={handleLogout}
              />

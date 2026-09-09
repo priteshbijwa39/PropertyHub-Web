@@ -7,6 +7,8 @@ import { useAuthStore } from "../../store/authStore";
 import { loginApi } from "../../services/authService";
 import { toast } from "../../components/common/Toast";
 import { Lock, Mail } from "lucide-react";
+import LanguageSelector from "../../components/common/LanguageSelector";
+import { translate, useLanguageStore } from "../../store/languageStore";
 
 interface LoginForm {
   email: string;
@@ -24,6 +26,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const setAuth = useAuthStore((state) => state.setAuth);
+  const language = useLanguageStore((state) => state.language);
 
   const [formData, setFormData] = useState<LoginForm>({
     email: "",
@@ -99,7 +102,7 @@ const Login = () => {
 
       setAuth(response.user, response.token);
 
-      toast.success("Login successful!");
+      toast.success(translate(language, "loginSuccessful"));
 
       navigate("/dashboard");
     } catch (error) {
@@ -116,26 +119,29 @@ const Login = () => {
         <div className="flex min-h-screen items-center justify-center bg-(--color-white) px-6 py-8 sm:px-8 lg:px-12">
           <div className="w-full max-w-[440px]">
             {/* Brand */}
-            <div className="mb-10 text-2xl font-bold sm:mb-12">
-              <span className="text-(--color-primary)">Property</span>
-              <span className="text-(--color-secondary-dark)">Hub</span>
+            <div className="mb-10 flex items-start justify-between gap-4 text-2xl font-bold sm:mb-12">
+              <div>
+                <span className="text-(--color-primary)">Property</span>
+                <span className="text-(--color-secondary-dark)">Hub</span>
+              </div>
+              <LanguageSelector compact />
             </div>
 
             {/* Heading */}
             <div className="mb-8">
               <h1 className="mb-2 text-3xl font-bold text-(--color-black) sm:text-4xl">
-                Welcome
+                {translate(language, "welcome")}
               </h1>
 
               <p className="text-base text-(--color-gray-500)">
-                Login to manage your properties
+                {translate(language, "loginToManage")}
               </p>
             </div>
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <Input
-                label="Email"
+                label={translate(language, "email")}
                 type="email"
                 name="email"
                 value={formData.email}
@@ -147,7 +153,7 @@ const Login = () => {
               />
 
               <Input
-                label="Password"
+                label={translate(language, "password")}
                 type="password"
                 name="password"
                 value={formData.password}
@@ -172,7 +178,7 @@ const Login = () => {
                     className="h-4 w-4 accent-(--color-primary)"
                   />
 
-                  <span>Remember me</span>
+                  <span>{translate(language, "rememberMe")}</span>
                 </label>
 
                 {/* Forgot Password */}
@@ -193,7 +199,7 @@ const Login = () => {
                 loading={loading}
                 className="w-full"
               >
-                Login
+                {translate(language, "login")}
               </Button>
             </form>
 

@@ -8,11 +8,13 @@ import { useFavoriteStore } from "../../store/favoriteStore";
 import PropertyTypeChart from "../../components/property/PropertyTypeChart";
 import type { Property } from "../../types/property";
 import { Link } from "react-router";
+import { translate, useLanguageStore } from "../../store/languageStore";
 const Dashboard = () => {
   const user = useAuthStore((state) => state?.user);
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const favoriteCount = useFavoriteStore((state) => state.favoriteCount);
+  const language = useLanguageStore((state) => state.language);
   const fetchProperties = async () => {
     try {
       setLoading(true);
@@ -72,7 +74,7 @@ const Dashboard = () => {
   return (
     <DashboardLayout
       title="Dashboard"
-      subtitle="Overview of your property management"
+      subtitle={translate(language, "overview")}
     >
       {/* Welcome */}
       <div className="mt-2 overflow-hidden rounded-2xl bg-[linear-gradient(to_right,var(--color-primary),#1e40af)] px-6 py-6 sm:px-8">
@@ -80,7 +82,9 @@ const Dashboard = () => {
           {/* Left Content */}
           <div>
             <h2 className="text-lg font-bold text-white! sm:text-xl">
-              {user ? `Welcome , ${user.name}!` : "Explore PropertyHub"}
+              {user
+                ? `${translate(language, "welcome")}, ${user.name}!`
+                : translate(language, "explorePropertyHub")}
             </h2>
 
             <p className="mt-1 text-sm text-white/80">
@@ -95,7 +99,7 @@ const Dashboard = () => {
             to="/all-properties"
             className="inline-flex shrink-0 items-center justify-center rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-(--color-primary) shadow-sm transition-all duration-200 hover:bg-gray-100 hover:shadow-md"
           >
-            Browse
+            {translate(language, "browse")}
           </Link>
         </div>
       </div>
@@ -104,7 +108,7 @@ const Dashboard = () => {
         {/* Total Properties */}
         <div className="rounded-lg border border-(--color-gray-100) bg-(--color-white) p-5 shadow-(--shadow-sm)">
           <span className="block text-xs text-(--color-gray-500)">
-            Total Properties
+            {translate(language, "totalProperties")}
           </span>
 
           <strong className="mt-1 block text-2xl font-bold text-(--color-gray-900)">
@@ -119,7 +123,7 @@ const Dashboard = () => {
         {/* My Properties */}
         <div className="rounded-lg border border-(--color-gray-100) bg-(--color-white) p-5 shadow-(--shadow-sm)">
           <span className="block text-xs text-(--color-gray-500)">
-            My Properties
+            {translate(language, "myProperties")}
           </span>
 
           <strong className="mt-1 block text-2xl font-bold text-(--color-gray-900)">
@@ -134,7 +138,7 @@ const Dashboard = () => {
         {/* Favorites */}
         <div className="rounded-lg border border-(--color-gray-100) bg-(--color-white) p-5 shadow-(--shadow-sm)">
           <span className="block text-xs text-(--color-gray-500)">
-            My Favorites
+            {translate(language, "myFavorites")}
           </span>
 
           <strong className="mt-1 block text-2xl font-bold text-(--color-gray-900)">
@@ -153,16 +157,16 @@ const Dashboard = () => {
         <div className="flex items-center justify-between gap-4">
           <div className="flex flex-col gap-1">
             <span className="text-lg font-bold text-(--color-gray-900)">
-              Property Price Range
+              {translate(language, "propertyPriceRange")}
             </span>
 
             <strong className="text-[13px] font-normal text-(--color-gray-500)">
-              Available Properties
+              {translate(language, "availableProperties")}
             </strong>
           </div>
 
           <span className="shrink-0 rounded-full bg-(--color-gray-100) px-3 py-1.5 text-[13px] font-semibold text-(--color-gray-600)">
-            {properties.length} Properties
+            {properties.length} {translate(language, "properties")}
           </span>
         </div>
 
@@ -170,7 +174,9 @@ const Dashboard = () => {
         <div className="mt-7 grid grid-cols-1 items-end gap-4 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-5">
           {/* Minimum */}
           <div className="flex flex-col gap-1">
-            <small className="text-xs text-(--color-gray-500)">Minimum</small>
+            <small className="text-xs text-(--color-gray-500)">
+              {translate(language, "minimum")}
+            </small>
 
             <strong className="text-xl font-bold text-(--color-gray-900)">
               {loading ? "..." : formatIndianCurrency(minimumPropertyPrice)}
@@ -184,7 +190,9 @@ const Dashboard = () => {
 
           {/* Maximum */}
           <div className="flex flex-col gap-1">
-            <small className="text-xs text-(--color-gray-500)">Maximum</small>
+            <small className="text-xs text-(--color-gray-500)">
+              {translate(language, "maximum")}
+            </small>
 
             <strong className="text-xl font-bold text-(--color-gray-900)">
               {loading ? "..." : formatIndianCurrency(maximumPropertyPrice)}
@@ -204,7 +212,7 @@ const Dashboard = () => {
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
             <h2 className="text-xl font-bold text-(--color-gray-900)">
-              Recent Properties
+              {translate(language, "recentProperties")}
             </h2>
 
             <p className="mt-1.5 text-sm text-(--color-gray-500)">
