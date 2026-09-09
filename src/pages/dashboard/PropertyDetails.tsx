@@ -81,17 +81,17 @@ const PropertyDetails = () => {
     property.propertyType as (typeof BATHROOM_TYPES)[number],
   );
 
-  const owner =
-    typeof property.owner === "object" && property.owner !== null
-      ? property.owner
-      : null;
+  // const owner =
+  //   typeof property.owner === "object" && property.owner !== null
+  //     ? property.owner
+  //     : null;
   const handleContactOwner = () => {
-    if (!owner?.mobileNumber) {
-      toast.error("Owner mobile number is not available.");
-      return;
-    }
+    // if (!owner?.mobileNumber) {
+    //   toast.error("Owner mobile number is not available.");
+    //   return;
+    // }
 
-    window.location.href = `tel:${owner.mobileNumber}`;
+    window.location.href = `tel:${"961-796-5515"}`;
   };
   return (
   <DashboardLayout title="Property Details">
@@ -247,7 +247,7 @@ const PropertyDetails = () => {
       </h2>
 
       <p className="mt-1 text-sm text-gray-500">
-        Contact the owner for more information.
+        Contact the broker to get more information, check availability, discuss pricing, or schedule a site visit.
       </p>
 
       <Button
@@ -256,35 +256,38 @@ const PropertyDetails = () => {
         onClick={handleContactOwner}
         className="mt-4 min-w-[160px]"
       >
-        Contact Owner
+        Call Broker
       </Button>
     </div>
 
     {/* Owner Details */}
     <div className="w-full rounded-lg border border-gray-100 bg-gray-50 p-4 lg:w-auto lg:min-w-[280px]">
-      {owner ? (
+      {/* {owner ? ( */}
         <div className="flex flex-col">
           <h3 className="text-base font-semibold text-gray-900">
-            {owner.name || "Property Owner"}
+            {/* {owner.name || "Property Owner"} */}
+              {"Shailesh bijwa"}
           </h3>
 
-          {owner.email && (
+          {/* {owner.email && ( */}
             <p className="mt-1 text-sm text-gray-500">
-              {owner.email}
+              {/* {owner.email} */}
+              {"shaileshbijwa@gmail.com"}
             </p>
-          )}
+          {/* )} */}
 
-          {owner.mobileNumber && (
+          {/* {owner.mobileNumber && ( */}
             <p className="mt-1 text-sm text-gray-500">
-              {owner.mobileNumber}
+              {/* {owner.mobileNumber} */}
+              {"961-796-5515"}
             </p>
-          )}
+          {/* )} */}
         </div>
-      ) : (
+      {/* ) : (
         <p className="text-sm text-gray-500">
           Owner details are not available.
         </p>
-      )}
+      )} */}
     </div>
   </div>
 </DashboardLayout>
