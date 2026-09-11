@@ -59,7 +59,7 @@ const Topbar = ({
          )}
        </div>
      </div>
-
+     <LanguageSelector compact />
      {showProfile && isAuthenticated ? (
        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
          <button
@@ -84,7 +84,7 @@ const Topbar = ({
          </Link>
        </div>
      ) : null}
-     <LanguageSelector compact />
+
    </header>
  );
 };
