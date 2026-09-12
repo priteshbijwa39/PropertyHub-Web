@@ -172,7 +172,7 @@ const MyProperties = () => {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {filteredProperties.map((property) => (
               <PropertyCard
                 key={property._id}

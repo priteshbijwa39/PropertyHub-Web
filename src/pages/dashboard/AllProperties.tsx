@@ -5,7 +5,7 @@ import Button from "../../components/common/Button";
 import { getAllPropertiesApi } from "../../services/propertyService";
 import { toast } from "../../components/common/Toast";
 import PropertyFilters from "../../components/property/PropertyFilters";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { usePropertyFilters } from "../../hooks/usePropertyFilters";
 import type { Property } from "../../types/property";
 
@@ -20,6 +20,15 @@ const AllProperties = () => {
     filterOptions,
     hasActiveFilters,
   } = usePropertyFilters(properties);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const location = searchParams.get("location");
+
+    if (location) {
+      updateFilter("search", location);
+    }
+  }, [searchParams, updateFilter]);
   const fetchProperties = async () => {
     try {
       setLoading(true);
@@ -104,7 +113,7 @@ const AllProperties = () => {
         <>
   
           {/* Property Grid */}
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {filteredProperties.map((property) => (
               <PropertyCard
                 key={property._id}

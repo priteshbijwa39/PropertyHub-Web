@@ -7,9 +7,13 @@ import { toast } from "../../components/common/Toast";
 import { BATHROOM_TYPES, BEDROOM_TYPES } from "../../utils/propertyData";
 import type { Property } from "../../types/property";
 import { getTimeAgo } from "../../utils/helpers";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router";
+import { getPropertyReference } from "../../utils/propertyReference";
 
 const PropertyDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
@@ -93,8 +97,26 @@ const PropertyDetails = () => {
 
     window.location.href = `tel:${"961-796-5515"}`;
   };
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+
+    navigate("/dashboard");
+  };
+
   return (
   <DashboardLayout title="Property Details">
+  <button
+    type="button"
+    onClick={handleBack}
+    className="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-(--color-primary) transition hover:opacity-75"
+  >
+    <ArrowLeft size={17} />
+    Back to properties
+  </button>
+
   {/* Main Property Card */}
   <div className="grid grid-cols-1 gap-6 rounded-xl border border-gray-100 bg-white p-4 shadow-sm lg:grid-cols-[1.4fr_1fr] lg:p-6">
     {/* Property Gallery */}
@@ -125,6 +147,10 @@ const PropertyDetails = () => {
     {/* Property Summary */}
     <div className="flex flex-col justify-center">
       <div className="flex flex-col">
+        <span className="mb-2 w-fit rounded-md bg-(--color-primary-light) px-2.5 py-1 text-xs font-semibold tracking-wide text-(--color-primary)">
+          Property ID: {getPropertyReference(property)}
+        </span>
+
         <h1 className="text-2xl font-bold text-gray-900">
           {property.title}
         </h1>
@@ -248,6 +274,10 @@ const PropertyDetails = () => {
 
       <p className="mt-1 text-sm text-gray-500">
         Contact the broker to get more information, check availability, discuss pricing, or schedule a site visit.
+      </p>
+
+      <p className="mt-2 text-xs font-medium text-(--color-primary)">
+        Mention {getPropertyReference(property)} when you call.
       </p>
 
       <Button

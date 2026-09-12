@@ -6,7 +6,7 @@ import { validateEmail, validatePassword } from "../../utils/validation";
 import { signupApi } from "../../services/authService";
 import { toast } from "../../components/common/Toast";
 import { Lock, Mail, Phone, User } from "lucide-react";
-import LanguageSelector from "../../components/common/LanguageSelector";
+import Footer from "../../components/layout/Footer";
 
 interface SignupForm {
   username: string;
@@ -115,18 +115,17 @@ const Signup = () => {
   };
 
   return (
-    <main className="min-h-screen bg-(--color-background)">
-      <section className="grid min-h-screen grid-cols-1 md:grid-cols-2">
+    <main className="flex min-h-screen flex-col bg-(--color-background)">
+      <section className="grid flex-1 grid-cols-1 md:grid-cols-2">
         {/* Left - Signup Form */}
         <div className="flex min-h-screen items-center justify-center bg-(--color-white) px-6 py-8 sm:px-8 lg:px-12">
           <div className="w-full max-w-[440px]">
             {/* Brand */}
-            <div className="mb-10 flex items-start justify-between gap-4 text-2xl font-bold sm:mb-12">
+            <div className="mb-10 text-2xl font-bold sm:mb-12">
               <div>
                 <span className="text-(--color-primary)">Property</span>
                 <span className="text-(--color-secondary-dark)">Hub</span>
               </div>
-              <LanguageSelector compact />
             </div>
 
             {/* Heading */}
@@ -274,6 +273,7 @@ const Signup = () => {
           </div>
         </div>
       </section>
+      <Footer />
     </main>
   );
 };

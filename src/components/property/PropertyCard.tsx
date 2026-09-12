@@ -1,11 +1,13 @@
 import { Link, useNavigate } from "react-router";
 import Button from "../common/Button";
 import { toggleFavorite } from "../../services/propertyService";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "../../store/authStore";
 import { toast } from "../common/Toast";
 import type { Property } from "../../types/property";
 import { Heart } from "lucide-react";
+import { getPropertyReference } from "../../utils/propertyReference";
+import { useFavoriteStore } from "../../store/favoriteStore";
 
 interface PropertyCardProps {
   property: Property;
@@ -22,10 +24,16 @@ const PropertyCard = ({
 }: PropertyCardProps) => {
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const favoriteIds = useFavoriteStore((state) => state.favoriteIds);
+  const setFavorite = useFavoriteStore((state) => state.setFavorite);
 
-  const [favorite, setFavorite] = useState(
-    property?.isFavorite || false
+  const [favorite, setFavoriteState] = useState(
+    property?.isFavorite || favoriteIds.has(property._id),
   );
+
+  useEffect(() => {
+    setFavoriteState(property?.isFavorite || favoriteIds.has(property._id));
+  }, [favoriteIds, property?.isFavorite, property._id]);
 
   const [favoriteLoading, setFavoriteLoading] =
     useState(false);
@@ -50,7 +58,8 @@ const PropertyCard = ({
 
       toast.success(response.message);
 
-      setFavorite(response.isFavorite);
+      setFavoriteState(response.isFavorite);
+      setFavorite(property._id, response.isFavorite);
 
       onFavoriteChange?.(response.isFavorite);
     } catch (error) {
@@ -68,7 +77,7 @@ const PropertyCard = ({
         className="block text-inherit no-underline"
       >
         {/* Image */}
-        <div className="relative h-[190px] w-full overflow-hidden bg-gray-100">
+        <div className="relative h-[150px] w-full overflow-hidden bg-gray-100">
           <img
             src={
               property.images?.[0] ||
@@ -88,43 +97,49 @@ const PropertyCard = ({
             </span>
           )}
 
+          <span className="absolute bottom-3 left-3 rounded-md bg-black/65 px-2 py-1 text-[10px] font-semibold tracking-wide text-white">
+            {getPropertyReference(property)}
+          </span>
+
           {/* Favorite */}
-         <button
-  type="button"
-  disabled={favoriteLoading}
-  onClick={handleFavorite}
-  aria-label={
-    favorite
-      ? "Remove from favorites"
-      : "Add to favorites"
-  }
-  className={`absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/60 bg-white/95 shadow-sm backdrop-blur-sm transition-all duration-200 ${
-    favorite
-      ? "text-red-500 hover:scale-110"
-      : "text-gray-500 hover:scale-110 hover:text-red-500"
-  } ${
-    favoriteLoading
-      ? "cursor-not-allowed opacity-60"
-      : "cursor-pointer"
-  }`}
->
-  <Heart
-    size={15}
-    strokeWidth={1}
-    fill={favorite ? "currentColor" : "none"}
-  />
-</button>
+          {isAuthenticated && (
+            <button
+              type="button"
+              disabled={favoriteLoading}
+              onClick={handleFavorite}
+              aria-label={
+                favorite
+                  ? "Remove from favorites"
+                  : "Add to favorites"
+              }
+              className={`absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/60 bg-white/95 shadow-sm backdrop-blur-sm transition-all duration-200 ${
+                favorite
+                  ? "text-red-500 hover:scale-110"
+                  : "text-gray-500 hover:scale-110 hover:text-red-500"
+              } ${
+                favoriteLoading
+                  ? "cursor-not-allowed opacity-60"
+                  : "cursor-pointer"
+              }`}
+            >
+              <Heart
+                size={15}
+                strokeWidth={1}
+                fill={favorite ? "currentColor" : "none"}
+              />
+            </button>
+          )}
         </div>
 
         {/* Content */}
-        <div className="p-5">
+        <div className="p-4">
           {/* Title */}
-          <h2 className="line-clamp-2 text-base font-semibold leading-6 text-gray-900">
+          <h2 className="line-clamp-2 text-sm font-semibold leading-5 text-gray-900">
             {property.title}
           </h2>
 
           {/* Category & Type */}
-          <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-gray-500">
+          <div className="mt-1 flex flex-wrap items-center gap-1 text-[11px] text-gray-500">
             {property.propertyType && (
               <span>{property.propertyType}</span>
             )}
@@ -138,7 +153,7 @@ const PropertyCard = ({
           </div>
 
           {/* Location */}
-          <div className="mt-3 flex items-start gap-2 text-xs leading-5 text-gray-600">
+          <div className="mt-2.5 flex items-start gap-1.5 text-[11px] leading-4 text-gray-600">
             <span className="shrink-0">📍</span>
 
             <div className="flex min-w-0 flex-col gap-0.5">
@@ -147,7 +162,7 @@ const PropertyCard = ({
               </span>
 
               {property.state && (
-                <small className="text-[11px] text-gray-400">
+                <small className="text-[10px] text-gray-400">
                   {property.state}
                 </small>
               )}
@@ -155,7 +170,7 @@ const PropertyCard = ({
           </div>
 
           {/* Meta */}
-          <div className="mt-3.5 flex flex-wrap items-center gap-3 border-t border-gray-100 pt-3 text-xs text-gray-500">
+          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-gray-100 pt-2.5 text-[11px] text-gray-500">
             {property.bedrooms !== undefined && (
               <span className="whitespace-nowrap">
                 🛏 {property.bedrooms}{" "}
@@ -181,7 +196,7 @@ const PropertyCard = ({
 
       {/* Owner Actions */}
       {showActions && (
-        <div className="grid grid-cols-2 gap-2 px-5 pb-5">
+        <div className="grid grid-cols-2 gap-2 px-4 pb-4">
           <Button
             type="button"
             variant="outline"

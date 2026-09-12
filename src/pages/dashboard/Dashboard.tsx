@@ -9,11 +9,21 @@ import PropertyTypeChart from "../../components/property/PropertyTypeChart";
 import type { Property } from "../../types/property";
 import { Link } from "react-router";
 import { translate, useLanguageStore } from "../../store/languageStore";
+import {
+  ArrowRight,
+  Heart,
+  Home,
+  ListPlus,
+  Search,
+  ShieldCheck,
+  MapPin,
+} from "lucide-react";
 const Dashboard = () => {
   const user = useAuthStore((state) => state?.user);
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const favoriteCount = useFavoriteStore((state) => state.favoriteCount);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const language = useLanguageStore((state) => state.language);
   const fetchProperties = async () => {
     try {
@@ -50,6 +60,15 @@ const Dashboard = () => {
         new Date(a.createdAt ?? 0).getTime(),
     )
     .slice(0, 5);
+  const featuredProperties = recentProperties.slice(0, 4);
+  const availableLocations = Array.from(
+    new Set(
+      properties
+        .map((property) => [property.city, property.state].filter(Boolean).join(", "))
+        .filter(Boolean),
+    ),
+  ).sort();
+  const announcementLocations = availableLocations.slice(0, 3).join(" • ");
 
   const propertyPrices = properties.map((property) => property.price);
 
@@ -76,6 +95,20 @@ const Dashboard = () => {
       title="Dashboard"
       subtitle={translate(language, "overview")}
     >
+      {announcementLocations && (
+        <div className="mb-4 flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3.5 py-2.5 text-sm text-(--color-primary)">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-xs">
+            📍
+          </span>
+          <p>
+            <span className="font-medium">
+              {translate(language, "locationAnnouncement")}
+            </span>{" "}
+            <strong className="font-semibold">{announcementLocations}</strong>
+          </p>
+        </div>
+      )}
+
       {/* Welcome */}
       <div className="mt-2 overflow-hidden rounded-2xl bg-[linear-gradient(to_right,var(--color-primary),#1e40af)] px-6 py-6 sm:px-8">
         <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
@@ -104,7 +137,11 @@ const Dashboard = () => {
         </div>
       </div>
       {/* Stats */}
-      <section className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <section
+        className={`mt-6 grid grid-cols-1 gap-4 ${
+          isAuthenticated ? "md:grid-cols-2 xl:grid-cols-3" : ""
+        }`}
+      >
         {/* Total Properties */}
         <div className="rounded-lg border border-(--color-gray-100) bg-(--color-white) p-5 shadow-(--shadow-sm)">
           <span className="block text-xs text-(--color-gray-500)">
@@ -120,36 +157,189 @@ const Dashboard = () => {
           </small>
         </div>
 
-        {/* My Properties */}
-        <div className="rounded-lg border border-(--color-gray-100) bg-(--color-white) p-5 shadow-(--shadow-sm)">
-          <span className="block text-xs text-(--color-gray-500)">
-            {translate(language, "myProperties")}
-          </span>
+        {isAuthenticated && (
+          <>
+            {/* My Properties */}
+            <div className="rounded-lg border border-(--color-gray-100) bg-(--color-white) p-5 shadow-(--shadow-sm)">
+              <span className="block text-xs text-(--color-gray-500)">
+                {translate(language, "myProperties")}
+              </span>
 
-          <strong className="mt-1 block text-2xl font-bold text-(--color-gray-900)">
-            {loading ? "..." : myProperties}
-          </strong>
+              <strong className="mt-1 block text-2xl font-bold text-(--color-gray-900)">
+                {loading ? "..." : myProperties}
+              </strong>
 
-          <small className="text-[10px] text-green-600">
-            Properties added by you
-          </small>
+              <small className="text-[10px] text-green-600">
+                Properties added by you
+              </small>
+            </div>
+
+            {/* Favorites */}
+            <div className="rounded-lg border border-(--color-gray-100) bg-(--color-white) p-5 shadow-(--shadow-sm)">
+              <span className="block text-xs text-(--color-gray-500)">
+                {translate(language, "myFavorites")}
+              </span>
+
+              <strong className="mt-1 block text-2xl font-bold text-(--color-gray-900)">
+                {favoriteCount}
+              </strong>
+
+              <small className="text-[10px] text-green-600">
+                Properties saved by you
+              </small>
+            </div>
+          </>
+        )}
+      </section>
+
+      {/* Quick Actions */}
+      <section className="mt-6">
+        <div className="mb-3 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-bold text-(--color-gray-900)">
+              Quick Actions
+            </h2>
+            <p className="mt-1 text-sm text-(--color-gray-500)">
+              Get where you need to go faster.
+            </p>
+          </div>
         </div>
 
-        {/* Favorites */}
-        <div className="rounded-lg border border-(--color-gray-100) bg-(--color-white) p-5 shadow-(--shadow-sm)">
-          <span className="block text-xs text-(--color-gray-500)">
-            {translate(language, "myFavorites")}
-          </span>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <Link
+            to="/all-properties"
+            className="group flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md"
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-(--color-primary)">
+              <Search size={19} />
+            </span>
+            <span className="min-w-0">
+              <strong className="block text-sm text-gray-900">Browse Properties</strong>
+              <span className="mt-0.5 block text-xs text-gray-500">Find your next property</span>
+            </span>
+            <ArrowRight className="ml-auto shrink-0 text-gray-400 transition group-hover:translate-x-1" size={17} />
+          </Link>
 
-          <strong className="mt-1 block text-2xl font-bold text-(--color-gray-900)">
-            {favoriteCount}
-          </strong>
-
-          <small className="text-[10px] text-green-600">
-            Properties saved by you
-          </small>
+          {isAuthenticated ? (
+            <>
+              <Link
+                to="/add-property"
+                className="group flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md"
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-50 text-green-600">
+                  <ListPlus size={19} />
+                </span>
+                <span className="min-w-0">
+                  <strong className="block text-sm text-gray-900">Add Property</strong>
+                  <span className="mt-0.5 block text-xs text-gray-500">Create a new listing</span>
+                </span>
+                <ArrowRight className="ml-auto shrink-0 text-gray-400 transition group-hover:translate-x-1" size={17} />
+              </Link>
+              <Link
+                to="/my-properties"
+                className="group flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md"
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                  <Home size={19} />
+                </span>
+                <span className="min-w-0">
+                  <strong className="block text-sm text-gray-900">My Properties</strong>
+                  <span className="mt-0.5 block text-xs text-gray-500">Manage your listings</span>
+                </span>
+                <ArrowRight className="ml-auto shrink-0 text-gray-400 transition group-hover:translate-x-1" size={17} />
+              </Link>
+              <Link
+                to="/favorites"
+                className="group flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md"
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-500">
+                  <Heart size={19} />
+                </span>
+                <span className="min-w-0">
+                  <strong className="block text-sm text-gray-900">Favorites</strong>
+                  <span className="mt-0.5 block text-xs text-gray-500">View saved properties</span>
+                </span>
+                <ArrowRight className="ml-auto shrink-0 text-gray-400 transition group-hover:translate-x-1" size={17} />
+              </Link>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="group flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md sm:col-span-2 xl:col-span-3"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                <ShieldCheck size={19} />
+              </span>
+              <span className="min-w-0">
+                <strong className="block text-sm text-gray-900">Login to unlock more</strong>
+                <span className="mt-0.5 block text-xs text-gray-500">Save favorites and manage your own listings</span>
+              </span>
+              <ArrowRight className="ml-auto shrink-0 text-gray-400 transition group-hover:translate-x-1" size={17} />
+            </Link>
+          )}
         </div>
       </section>
+
+      {/* Featured Properties */}
+      {featuredProperties.length > 0 && (
+        <section className="mt-8">
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold text-(--color-gray-900)">
+                Featured Properties
+              </h2>
+              <p className="mt-1 text-sm text-(--color-gray-500)">
+                Recently added opportunities worth exploring.
+              </p>
+            </div>
+            <Link
+              to="/all-properties"
+              className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-(--color-primary) hover:underline"
+            >
+              View all <ArrowRight size={15} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {featuredProperties.map((property) => (
+              <PropertyCard key={`featured-${property._id}`} property={property} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Available Locations */}
+      {availableLocations.length > 0 && (
+        <section className="mt-8 border-y border-gray-200 py-6 sm:py-7">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-(--color-gray-900)">
+                {translate(language, "availableLocations")}
+              </h2>
+              <p className="mt-1 text-sm text-(--color-gray-500)">
+                {translate(language, "availableLocationsDescription")}
+              </p>
+            </div>
+
+            <span className="text-xs font-medium text-(--color-gray-500)">
+              {availableLocations.length}{" "}
+              {translate(language, "locationsAvailable")}
+            </span>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {availableLocations.map((location) => (
+              <Link
+                key={location}
+                to={`/all-properties?location=${encodeURIComponent(location)}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-(--color-primary) transition hover:border-blue-200 hover:bg-blue-100"
+              >
+                <MapPin size={14} />
+                {location}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Property Price Range */}
       <section className="mt-6 rounded-2xl border border-(--color-gray-200) bg-(--color-white) p-5 sm:p-6">
@@ -206,25 +396,32 @@ const Dashboard = () => {
         <PropertyTypeChart properties={properties} />
       </section>
 
-      {/* Recent Properties */}
-      <section className="mt-8 w-full">
-        {/* Section Header */}
-        <div className="mb-5 flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-bold text-(--color-gray-900)">
-              {translate(language, "recentProperties")}
-            </h2>
-
-            <p className="mt-1.5 text-sm text-(--color-gray-500)">
-              Recently added properties
-            </p>
-          </div>
+      {/* How PropertyHub Works */}
+      <section className="mt-8 border-y border-gray-200 py-6 sm:py-7">
+        <div className="mb-5">
+          <h2 className="text-lg font-bold text-(--color-gray-900)">
+            How PropertyHub Works
+          </h2>
+          <p className="mt-1 text-sm text-(--color-gray-500)">
+            A simple way to find and manage your next property.
+          </p>
         </div>
-
-        {/* Property Grid */}
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {recentProperties.map((property) => (
-            <PropertyCard key={property._id} property={property} />
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            ["01", "Browse", "Explore properties using smart search and filters."],
+            ["02", "Compare", "Review prices, details, location, and property IDs."],
+            ["03", "Save", "Keep your favorite properties together for later."],
+            ["04", "Connect", "Call the broker and mention the property ID."],
+          ].map(([number, heading, description]) => (
+            <div key={number} className="flex gap-3">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-(--color-primary)">
+                {number}
+              </span>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">{heading}</h3>
+                <p className="mt-1 text-xs leading-5 text-gray-500">{description}</p>
+              </div>
+            </div>
           ))}
         </div>
       </section>

@@ -5,6 +5,7 @@ import Input from "../../components/common/Input";
 import { validatePassword } from "../../utils/validation";
 import { resetPasswordApi } from "../../services/authService";
 import { toast } from "../../components/common/Toast";
+import Footer from "../../components/layout/Footer";
 
 interface ResetPasswordForm {
   password: string;
@@ -78,8 +79,8 @@ const ResetPassword = () => {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <section className="mx-auto flex min-h-screen max-w-7xl">
+    <main className="flex min-h-screen flex-col bg-gray-50">
+      <section className="mx-auto flex w-full flex-1 max-w-7xl">
         {/* Left - Form Section */}
         <div className="flex w-full items-center justify-center px-6 py-10 lg:w-1/2 lg:px-12">
           <div className="w-full max-w-md">
@@ -251,6 +252,7 @@ const ResetPassword = () => {
           </div>
         </div>
       </section>
+      <Footer />
     </main>
   );
 };

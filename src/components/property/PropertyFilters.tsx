@@ -16,8 +16,6 @@ interface PropertyFiltersProps {
   filters: PropertyFiltersState;
 
   filterOptions: {
-    cities: string[];
-    states: string[];
     propertyTypes: string[];
     propertyCategories: string[];
     listingTypes: string[];
@@ -56,8 +54,6 @@ const PropertyFilters = ({
     filters.listingType !== "all",
     filters.propertyCategory !== "all",
     filters.propertyType !== "all",
-    filters.city !== "all",
-    filters.state !== "all",
     filters.priceRange !== "all",
   ].filter(Boolean).length;
 
@@ -67,26 +63,26 @@ const PropertyFilters = ({
   };
 
   const selectClassName =
-    "h-[38px] w-full cursor-pointer rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-800 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 hover:border-gray-400";
+    "h-9 w-full cursor-pointer rounded-lg border border-gray-300 bg-white px-2.5 text-sm text-gray-800 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 hover:border-gray-400";
 
   const labelClassName =
-    "mb-1.5 text-xs font-semibold text-gray-700";
+    "mb-1 text-[11px] font-semibold text-gray-700";
 
   return (
-    <div className="mb-6 w-full rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <div className="mb-4 w-full rounded-xl border border-gray-200 bg-white p-3 shadow-sm sm:p-4">
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <div className="relative flex-1">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
 
             <input
               type="text"
-              placeholder="Search properties..."
+              placeholder="Search by property name, location, or ID..."
               value={filters.search}
               onChange={(event) =>
                 updateFilter("search", event.target.value)
               }
-              className="h-[42px] w-full rounded-lg border border-gray-300 bg-white pl-10 pr-10 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10"
+              className="h-10 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-10 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10"
             />
 
             {filters.search && (
@@ -105,7 +101,7 @@ const PropertyFilters = ({
             <button
               type="button"
               onClick={() => setIsExpanded((value) => !value)}
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-300 hover:bg-gray-100"
+              className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-3 text-sm font-medium text-gray-700 transition hover:border-gray-300 hover:bg-gray-100"
             >
               <SlidersHorizontal className="h-4 w-4" />
               {isExpanded ? "Hide filters" : "Filters"}
@@ -129,17 +125,17 @@ const PropertyFilters = ({
         </div>
 
         {hasActiveFilters && (
-          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
-            <span className="rounded-full bg-blue-50 px-2.5 py-1 font-medium text-blue-700">
+          <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
+            <span className="rounded-full bg-blue-50 px-2 py-0.5 font-medium text-blue-700">
               {activeFilterCount} active
             </span>
-            <span>Search and filter results are tuned to your current selection.</span>
+            <span>Search and filters are active.</span>
           </div>
         )}
       </div>
 
       {isExpanded && (
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div className="flex flex-col">
             <label htmlFor="listingType" className={labelClassName}>
               Listing
@@ -204,52 +200,6 @@ const PropertyFilters = ({
               {propertyTypes.map((type) => (
                 <option key={type} value={type}>
                   {type}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="city" className={labelClassName}>
-              City
-            </label>
-
-            <select
-              id="city"
-              value={filters.city}
-              onChange={(event) =>
-                updateFilter("city", event.target.value)
-              }
-              className={selectClassName}
-            >
-              <option value="all">All Cities</option>
-
-              {filterOptions.cities.map((city) => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="state" className={labelClassName}>
-              State
-            </label>
-
-            <select
-              id="state"
-              value={filters.state}
-              onChange={(event) =>
-                updateFilter("state", event.target.value)
-              }
-              className={selectClassName}
-            >
-              <option value="all">All States</option>
-
-              {filterOptions.states.map((state) => (
-                <option key={state} value={state}>
-                  {state}
                 </option>
               ))}
             </select>

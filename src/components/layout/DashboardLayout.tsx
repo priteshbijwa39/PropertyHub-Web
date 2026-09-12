@@ -1,6 +1,11 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useState } from "react";
+import { useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
+import Footer from "./Footer";
+import { getFavoriteProperties } from "../../services/propertyService";
+import { useAuthStore } from "../../store/authStore";
+import { useFavoriteStore } from "../../store/favoriteStore";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -15,76 +20,57 @@ const DashboardLayout = ({
   subtitle,
   showProfile = true,
 }: DashboardLayoutProps) => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const setFavoriteIds = useFavoriteStore((state) => state.setFavoriteIds);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    if (!isAuthenticated) {
+      setFavoriteIds([]);
+      return;
+    }
 
-    const updateLayout = () => {
-      const mobile = mediaQuery.matches;
-      setIsMobile(mobile);
-
-      if (mobile) {
-        setIsSidebarCollapsed(true);
-        setIsMobileSidebarOpen(false);
-      } else {
-        setIsSidebarCollapsed(false);
+    const loadFavorites = async () => {
+      try {
+        const favorites = await getFavoriteProperties();
+        setFavoriteIds(favorites.map((property) => property._id));
+      } catch (error) {
+        console.error("Failed to load favorite properties:", error);
       }
     };
 
-    updateLayout();
-    mediaQuery.addEventListener("change", updateLayout);
-
-    return () => mediaQuery.removeEventListener("change", updateLayout);
-  }, []);
-
-  const sidebarWidth = isSidebarCollapsed ? "72px" : "240px";
+    loadFavorites();
+  }, [isAuthenticated, setFavoriteIds]);
 
   return (
-    <main className="min-h-screen bg-(--color-background)">
+    <main className="flex min-h-screen flex-col bg-(--color-background)">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        isMobile={isMobile}
-        isOpen={!isMobile || isMobileSidebarOpen}
-        onToggle={() => {
-          if (isMobile) {
-            setIsMobileSidebarOpen((prev) => !prev);
-            return;
-          }
-
-          setIsSidebarCollapsed((prev) => !prev);
-        }}
-        onClose={() => setIsMobileSidebarOpen(false)}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
 
-      {isMobile && isMobileSidebarOpen && (
+      {isSidebarOpen && (
         <button
           type="button"
-          aria-label="Close mobile menu"
-          onClick={() => setIsMobileSidebarOpen(false)}
+          aria-label="Close sidebar"
+          onClick={() => setIsSidebarOpen(false)}
           className="fixed inset-0 z-30 bg-black/40"
         />
       )}
 
-      <div
-        className="min-h-screen transition-all duration-300"
-        style={{
-          marginLeft: isMobile ? 0 : sidebarWidth,
-        }}
-      >
+      <div className="flex min-h-screen flex-1 flex-col">
         <Topbar
           title={title}
           subtitle={subtitle}
           showProfile={showProfile}
-          isMobile={isMobile}
-          onOpenSidebar={() => setIsMobileSidebarOpen(true)}
+          onOpenSidebar={() => setIsSidebarOpen((previous) => !previous)}
         />
 
-        <section className="w-full px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+        <section className="w-full flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
           <div className="mx-auto w-full max-w-[1600px]">{children}</div>
         </section>
+
+        <Footer />
       </div>
     </main>
   );
