@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
+import { ArrowLeft } from "lucide-react";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
 import DashboardLayout from "../../components/layout/DashboardLayout";
@@ -32,6 +33,7 @@ interface PropertyForm {
 
 const EditProperties = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState<PropertyForm>({
     title: "",
@@ -49,21 +51,28 @@ const EditProperties = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [, setFetching] = useState(true);
+  const [fetching, setFetching] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
     const fetchProperty = async () => {
       if (!id) {
         toast.error("Property ID is missing");
+        setFetchError(true);
         setFetching(false);
         return;
       }
 
       try {
         setFetching(true);
+        setFetchError(false);
 
         const response = await getPropertyByIdApi(id);
-        const property: Property = response?.property ?? response;
+        const property: Property | undefined = response?.property;
+
+        if (!property) {
+          throw new Error("Property details were not returned by the server.");
+        }
 
         setFormData({
           title: property.title ?? "",
@@ -82,6 +91,7 @@ const EditProperties = () => {
       } catch (error) {
         console.error("Get Property Error:", error);
 
+        setFetchError(true);
         toast.error("Failed to load property details.");
       } finally {
         setFetching(false);
@@ -189,22 +199,65 @@ const EditProperties = () => {
     }
   };
 
+  if (fetching) {
+    return (
+      <DashboardLayout
+        title="Edit Property"
+        subtitle="Update your property details"
+      >
+        <div className="flex min-h-[300px] items-center justify-center text-sm text-gray-500">
+          Loading property details...
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <DashboardLayout
+        title="Edit Property"
+        subtitle="Update your property details"
+      >
+        <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white p-6 text-center">
+          <h2 className="text-lg font-semibold text-gray-900">
+            Property details unavailable
+          </h2>
+          <p className="mt-2 text-sm text-gray-500">
+            We could not load this property for editing.
+          </p>
+          <Link
+            to="/my-properties"
+            className="mt-5 rounded-lg bg-(--color-primary) px-4 py-2 text-sm font-semibold text-white"
+          >
+            Back to My Properties
+          </Link>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
 <DashboardLayout
   title="Edit Property"
   subtitle="Update your property details"
 >
-  <div className="w-full">
-    {/* Header */}
-    <div className="mb-6">
-      <h1 className="text-xl font-bold text-gray-900">
-        Edit Property
-      </h1>
+  <button
+    type="button"
+    onClick={() => {
+      if (window.history.length > 1) {
+        navigate(-1);
+        return;
+      }
 
-      <p className="mt-1 text-sm text-gray-500">
-        Update your property details
-      </p>
-    </div>
+      navigate("/my-properties");
+    }}
+    className="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-(--color-primary) transition hover:opacity-75"
+  >
+    <ArrowLeft size={17} />
+    Back to properties
+  </button>
+
+  <div className="w-full">
 
     {/* Form */}
     <form
@@ -212,7 +265,7 @@ const EditProperties = () => {
       className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm md:p-6"
     >
       {/* Property Fields */}
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {/* Property Title */}
         <Input
           label="Property Title"

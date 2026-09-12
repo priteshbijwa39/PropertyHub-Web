@@ -41,7 +41,11 @@ type TranslationKey =
   | "minimum"
   | "maximum"
   | "properties"
-  | "overview";
+  | "overview"
+  | "availableLocations"
+  | "availableLocationsDescription"
+  | "locationsAvailable"
+  | "locationAnnouncement";
 
 const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
   en: {
@@ -73,6 +77,10 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     maximum: "Maximum",
     properties: "Properties",
     overview: "Overview of your property management",
+    availableLocations: "Available Locations",
+    availableLocationsDescription: "Explore properties available in these locations.",
+    locationsAvailable: "locations available",
+    locationAnnouncement: "Properties are now available in",
   },
   hi: {
     language: "भाषा",
@@ -103,6 +111,10 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     maximum: "अधिकतम",
     properties: "संपत्तियां",
     overview: "आपके संपत्ति प्रबंधन का अवलोकन",
+    availableLocations: "उपलब्ध स्थान",
+    availableLocationsDescription: "इन स्थानों पर उपलब्ध संपत्तियां देखें।",
+    locationsAvailable: "स्थान उपलब्ध",
+    locationAnnouncement: "यहां संपत्तियां उपलब्ध हैं:",
   },
   mr: {
     language: "भाषा",
@@ -133,6 +145,10 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     maximum: "कमाल",
     properties: "मालमत्ता",
     overview: "तुमच्या मालमत्ता व्यवस्थापनाचा आढावा",
+    availableLocations: "उपलब्ध ठिकाणे",
+    availableLocationsDescription: "या ठिकाणी उपलब्ध मालमत्ता एक्सप्लोर करा.",
+    locationsAvailable: "ठिकाणे उपलब्ध",
+    locationAnnouncement: "आता येथे मालमत्ता उपलब्ध आहेत:",
   },
   gu: {
     language: "ભાષા",
@@ -163,6 +179,10 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     maximum: "મહત્તમ",
     properties: "મિલકતો",
     overview: "તમારા મિલકત સંચાલનનો સારાંશ",
+    availableLocations: "ઉપલબ્ધ સ્થાનો",
+    availableLocationsDescription: "આ સ્થાનો પર ઉપલબ્ધ મિલકતો જુઓ.",
+    locationsAvailable: "સ્થાનો ઉપલબ્ધ",
+    locationAnnouncement: "હવે અહીં મિલકતો ઉપલબ્ધ છે:",
   },
 };
 

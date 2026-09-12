@@ -15,6 +15,8 @@ export interface PropertyOwner {
 
 export interface Property {
   _id: string;
+  propertyNumber?: string | number;
+  propertyCode?: string;
   title: string;
   description: string;
   price: number;
